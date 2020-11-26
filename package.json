@@ -1,0 +1,26 @@
+{
+  "name": "js-library-quzhaohu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csc309-fall-2020/js-library-quzhaohu.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/csc309-fall-2020/js-library-quzhaohu/issues"
+  },
+  "homepage": "https://github.com/csc309-fall-2020/js-library-quzhaohu#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

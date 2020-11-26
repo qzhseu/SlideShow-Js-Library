@@ -1,0 +1,220 @@
+/*********************************************
+ * GLOBAL STYLES
+ *********************************************/
+ body {
+    background: #222;
+    background-color: #222; }
+  
+.presentr {
+    font-family: 'Satisfy', Helvetica, sans-serif, ;
+    font-size: 40px;
+    font-weight: normal;
+    color: #fff; 
+}
+
+.presentr .slides > section,
+.presentr .slides > section > section {
+    line-height: 1.3;
+    font-weight: inherit; 
+}
+
+/*********************************************
+ * HEADERS
+ *********************************************/
+ .presentr h1,
+ .presentr h2,
+ .presentr h3,
+ .presentr h4,
+ .presentr h5,
+ .presentr h6 {
+   margin: 0 0 20px 0;
+   color: #fff;
+   font-family: "Source Sans Pro", Helvetica, sans-serif;
+   font-weight: 600;
+   line-height: 1.2;
+   letter-spacing: normal;
+   text-transform: uppercase;
+   text-shadow: none;
+   word-wrap: break-word; 
+   text-align: center;
+}
+ 
+.presentr h1 {
+   font-size: 2.5em; 
+}
+ 
+.presentr h2 {
+   font-size: 1.6em; 
+}
+ 
+.presentr h3 {
+   font-size: 1.3em; 
+}
+ 
+.presentr h4 {
+   font-size: 1em; 
+}
+ 
+.presentr h1 {
+   text-shadow: none; 
+}
+
+/*********************************************
+ * OTHER
+ *********************************************/
+.presentr p {
+    margin: 20px 100px;
+    line-height: 1.3; 
+    text-align: center;
+}
+
+.presentr strong,
+.presentr b {
+  font-weight: bold; 
+}
+
+.presentr em {
+    font-style: italic; 
+}
+
+.presentr code {
+    font-family: monospace;
+    text-transform: none; 
+}
+  
+.presentr pre code {
+    display: block;
+    padding: 5px;
+    overflow: auto;
+    max-height: 400px;
+    word-wrap: normal; 
+}
+
+.presentr ol,
+.presentr dl,
+.presentr ul {
+  display: inline-block;
+  text-align: left;
+  margin: 0 0 0 1em; }
+
+.presentr ol {
+  list-style-type: decimal; }
+
+.presentr ul {
+  list-style-type: disc; }
+
+.presentr ul ul {
+  list-style-type: square; }
+
+.presentr ul ul ul {
+  list-style-type: circle; }
+
+.presentr ul ul,
+.presentr ul ol,
+.presentr ol ol,
+.presentr ol ul {
+  display: block;
+  margin-left: 40px; }
+
+.presentr table {
+    margin: 0 auto; 
+    border-collapse: collapse;
+    border-spacing: 0; 
+}
+  
+.presentr table th {
+    font-weight: bold; 
+}
+.presentr table th,
+.presentr table td {
+    text-align: left;
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    border-bottom: 1px solid; 
+}
+  
+.presentr table th[align="center"],
+.presentr table td[align="center"] {
+    text-align: center; 
+}
+  
+.presentr table th[align="right"],
+.presentr table td[align="right"] {
+    text-align: right; 
+}
+  
+.presentr table tbody tr:last-child th,
+.presentr table tbody tr:last-child td {
+    border-bottom: none; 
+}
+  
+
+/*********************************************
+ * LINKS
+ *********************************************/
+.presentr a {
+    color: #887bff; 
+    text-decoration: none;
+    -webkit-transition: color .15s ease;
+    -moz-transition: color .15s ease;
+    transition: color .15s ease; 
+}
+  
+.presentr a:hover {
+    color: #beb7ff; 
+    text-shadow: none;
+    border: none; 
+}
+  
+.presentr .roll span:after {
+    color: #fff;
+    background: #392cad; 
+}
+
+/*********************************************
+ * IMAGES
+ *********************************************/
+ .presentr section img {
+    margin: 15px 0px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 4px solid #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); 
+}
+  
+.presentr section img.plain {
+    border: 0;
+    box-shadow: none; 
+}
+  
+.presentr a img {
+    -webkit-transition: all .15s linear;
+    -moz-transition: all .15s linear;
+    transition: all .15s linear; 
+}
+  
+.presentr a:hover img {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #887bff; 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.55); 
+}
+
+/*********************************************
+ * NAVIGATION CONTROLS
+ *********************************************/
+.presentr .controls {
+    color: #887bff; 
+}
+
+/*********************************************
+ * PROGRESS BAR
+ *********************************************/
+.presentr .progress{
+    position: fixed;
+    background: #887bff; 
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0.8vh;
+    z-index: 1;
+    transition: all 1s;
+}
+  
