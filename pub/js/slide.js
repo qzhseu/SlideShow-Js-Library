@@ -1,30 +1,72 @@
-/* JS Libraries */
 "use strict";
 
-function Slide(){
-	var Slide;
+function extend( a, b ) {
 
-	var SLIDES_SELECTOR = '.slides section',
-		HORIZONTAL_SLIDES_SELECTOR = '.slides>section',
-		VERTICAL_SLIDES_SELECTOR = '.slides>section.present>section',
-		HOME_SLIDE_SELECTOR = '.slides>section:first-of-type',
+    for( var i in b ) {
+        a[ i ] = b[ i ];
+    }
 
-		// Configuration defaults, can be overridden at initialization time
-		config = {
+    return a;
 
-			// The "normal" size of the presentation, aspect ratio will be preserved
-			// when the presentation is scaled to fit different resolutions
-			width: 960,
-			height: 700,
+}
 
-			// Factor of the display size that should remain empty around the content
-			margin: 0.04,
+function wrapArray(val) {
+    return Array.isArray(val) ? val : [val];
+}
 
-			// Bounds for smallest/largest possible scale to apply to content
-			minScale: 0.2,
-			maxScale: 2.0,
+/**
+ * Creates an HTML element and returns a reference to it.
+ * If the element already exists the existing instance will
+ * be returned.
+ */
+function createSingletonNode( container, tagname, classname, innerHTML ) {
 
-			// Display presentation control arrows
+    // Find all nodes matching the description
+    var nodes = container.querySelectorAll( '.' + classname );
+
+    // Check all matches to find one which is a direct child of
+    // the specified container
+    for( var i = 0; i < nodes.length; i++ ) {
+        var testNode = nodes[i];
+        if( testNode.parentNode === container ) {
+            return testNode;
+        }
+    }
+
+    // If no node was found, create it now
+    var node = document.createElement( tagname );
+    node.className = classname;
+    //console.log(tagname);
+    //console.log(innerHTML);
+    if( typeof innerHTML === 'string' ) {
+        
+        node.innerHTML = innerHTML;
+    }
+    container.appendChild( node );
+
+    return node;
+
+}
+
+
+function SliderGenerator(){
+
+    // Current slide-index
+    this._hslideIndex=0;
+
+    this._slides=[];
+
+    // Event-listener
+    this._boundEventListener = {
+        'slide': [],
+        'beforeSlide': [],
+        'fragment': [],
+        'beforeFragment': [],
+        'action': []
+    };
+
+    this.config={
+        // Display presentation control arrows
 			controls: true,
 
 			// Help the user learn the controls by providing hints, for example by
@@ -36,746 +78,698 @@ function Slide(){
 
 			// Visibility rule for backwards navigation arrows; "faded", "hidden"
 			// or "visible"
-			controlsBackArrows: 'faded',
-
-			// Display a presentation progress bar
+            controlsBackArrows: 'faded',
+            
+            // Enable keyboard shortcuts for navigation
+            keyboard: true,
+            
+            // Display a presentation progress bar
 			progress: true,
 
-			// Display the page number of the current slide
-			slideNumber: false,
 
-			// Determine which displays to show the slide number on
-			showSlideNumber: 'all',
+    }
 
-			// Push each slide change to the browser history
-			history: false,
+    this._options = {
 
-			// Enable the slide overview mode
-			overview: true,
+        // Query selectors
+        HORIZONTAL_SLIDES_SELECTOR: '.slides > section',
+        VERTICAL_SLIDES_SELECTOR: 'section',
+        FRAGMENTS_SELECTOR: '.frag',
 
-			// Vertical centering of slides
-			center: true,
+        // CSS Group prefix
+        fragmentGroupPrefix: 'g-',
 
-			// Loop the presentation
-			loop: false,
+        // Start index
+        slideIndex: 0,
 
-			// Turns fragments on and off globally
-			fragments: true,
+        // CSS classes
+        classes: {
+            previousHSlide: 'previous-hslide',
+            nextHSlide: 'next-hslide',
+            currentHSlide: 'current-hslide',
 
-			// Flags if the presentation is running in an embedded mode,
-			// i.e. contained within a limited portion of the screen
-			embedded: false,
+            previousVSlide: 'previous-vslide',
+            nextVSlide: 'next-vslide',
+            currentVSlide: 'current-vslide',
 
-			// Flags if it should be possible to pause the presentation (blackout)
-			pause: true,
+            activeFragment: 'active-frag',
+            currentFragment: 'current-frag'
+        },
 
-			// Global override for autolaying embedded media (video/audio/iframe)
-			// - null:   Media will only autoplay if data-autoplay is present
-			// - true:   All media will autoplay, regardless of individual setting
-			// - false:  No media will autoplay, regardless of individual setting
-			autoPlayMedia: null,
+        // Keyboard shortcuts
+        shortcuts: {
+            nextSlide: ['d', 'D'],
+            previousSlide: ['a', 'A'],
 
-			// Controls automatic progression to the next slide
-			// - 0:      Auto-sliding only happens if the data-autoslide HTML attribute
-			//           is present on the current slide or fragment
-			// - 1+:     All slides will progress automatically at the given interval
-			// - false:  No auto-sliding, even if data-autoslide is present
-			autoSlide: 0,
+            upSlide:['w','W'],
+            downSlide:['s','S'],
 
-			// Transition style
-			transition: 'slide', // none/fade/slide/convex/concave/zoom
+            firstSlide: ['y', 'Y'],
+            lastSlide: ['x', 'X'],
 
-			// Transition speed
-			transitionSpeed: 'default', // default/fast/slow
+            nextFragment: ['ArrowRight'],
+            previousFragment: ['ArrowLeft'],
+            upFragment:['ArrowUp'],
+            downFragment:['ArrowDown'],
+        },
 
-			// Transition style for full page slide backgrounds
-			backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        clickOptions:{
+            nextFragment: ['rightArrow','navigate-right'],
+            previousFragment: ['leftArrow','navigate-left'],
+            upFragment:['upArrow','navigate-up'],
+            downFragment:['downArrow','navigate-down'],
+        }
 
-			// Number of slides away from the current that are visible
-			viewDistance: 3,
+    };
 
-			// The display mode that will be used to show slides
-			display: 'block',
+    // Flags if Slide.initialize() has been called
+    this.initialized = false;
 
-			// Script dependencies to load
-			dependencies: []
+    // Cached references to DOM elements
+    this.dom = {};
 
-		},
-
-		// Flags if Slide.initialize() has been called
-		initialized = false,
-
-		// Flags if slide.js is loaded (has dispatched the 'ready' event)
-		loaded = false,
-
-		// Flags if the overview mode is currently active
-		overview = false,
-
-		// Holds the dimensions of our overview slides, including margins
-		overviewSlideWidth = null,
-		overviewSlideHeight = null,
-
-		// The horizontal and vertical index of the currently active slide
-		indexh,
-		indexv,
-
-		// The previous and current slide HTML elements
-		previousSlide,
-		currentSlide,
-
-		previousBackground,
-
-		// Remember which directions that the user has navigated towards
-		hasNavigatedRight = false,
-		hasNavigatedDown = false,
-
-		// Slides may hold a data-state attribute which we pick up and apply
-		// as a class to the body. This list contains the combined state of
-		// all current slides.
-		state = [],
-
-		// The current scale of the presentation (see width/height config)
-		scale = 1,
-
-		// CSS transform that is currently applied to the slides container,
-		// split into two groups
-		slidesTransform = { layout: '', overview: '' },
-
-		// Cached references to DOM elements
-		dom = {},
-
-		// Flags if the interaction event listeners are bound
-		eventsAreBound = false,
-
-		// The current auto-slide duration
-		autoSlide = 0,
-
-		// Auto slide properties
-		autoSlidePlayer,
-		autoSlideTimeout = 0,
-		autoSlideStartTime = -1,
-		autoSlidePaused = false,
-
-	/**
-	 * Starts up the presentation if the client is capable.
-	 */
-	function initialize( options={} ) {
-
-		// Make sure we only initialize once
-		if( initialized === true ) return;
-
-		initialized = true;
-
-		// Cache references to key DOM elements
-		dom.wrapper = document.querySelector( '.slider' );
-		dom.slides = document.querySelector( '.slider .slides' );
-
-		// Force a layout when the whole page, incl fonts, has loaded
-		window.addEventListener( 'load', layout, false );
-
-		// Copy options over to our config object
-		extend( config, options );
-
-		// Loads the dependencies and continues to #start() once done
-		load();
-
-	}
-
-	/**
-     * Loads the dependencies of reveal.js. Dependencies are
-     * defined via the configuration option 'dependencies'
-     * and will be loaded prior to starting/binding reveal.js.
-     * Some dependencies may have an 'async' flag, if so they
-     * will load after reveal.js has been started up.
-     */
-	function load() {
-
-		var scripts = [],
-			scriptsAsync = [],
-			scriptsToPreload = 0;
-
-		// Called once synchronous scripts finish loading
-		function proceed() {
-			if( scriptsAsync.length ) {
-				// Load asynchronous scripts
-				head.js.apply( null, scriptsAsync );
-			}
-
-			start();
-		}
-
-		function loadScript( s ) {
-			head.ready( s.src.match( /([\w\d_\-]*)\.?js$|[^\\\/]*$/i )[0], function() {
-				// Extension may contain callback functions
-				if( typeof s.callback === 'function' ) {
-					s.callback.apply( this );
-				}
-
-				if( --scriptsToPreload === 0 ) {
-					proceed();
-				}
-			});
-		}
-
-		for( var i = 0, len = config.dependencies.length; i < len; i++ ) {
-			var s = config.dependencies[i];
-
-			// Load if there's no condition or the condition is truthy
-			if( !s.condition || s.condition() ) {
-				if( s.async ) {
-					scriptsAsync.push( s.src );
-				}
-				else {
-					scripts.push( s.src );
-				}
-
-				loadScript( s );
-			}
-		}
-
-		if( scripts.length ) {
-			scriptsToPreload = scripts.length;
-
-			// Load synchronous scripts
-			head.js.apply( null, scripts );
-		}
-		else {
-			proceed();
-		}
-
-	}
-
-	/**
-	 * Starts up slide.js by binding input events and navigating
-	 * to the current URL deeplink if there is one.
-	 */
-	function start() {
-
-		loaded = true;
-
-		// Make sure we've got all the DOM elements we need
-		setupDOM();
-
-		// Listen to messages posted to this window
-		setupPostMessage();
-
-		// Resets all vertical slides so that only the first is visible
-		resetVerticalSlides();
-
-		// Updates the presentation to match the current configuration values
-		configure();
-
-		// Read the initial hash
-		//readURL();
-
-		// Update all backgrounds
-		//updateBackground( true );
-
-		// Notify listeners that the presentation is ready but use a 1ms
-		// timeout to ensure it's not fired synchronously after #initialize()
-		setTimeout( function() {
-			// Enable transitions now that we're loaded
-			dom.slides.classList.remove( 'no-transition' );
-
-			dom.wrapper.classList.add( 'ready' );
-
-			dispatchEvent( 'ready', {
-				'indexh': indexh,
-				'indexv': indexv,
-				'currentSlide': currentSlide
-			} );
-		}, 1 );
-
-	}
-
-	/**
-	 * Finds and stores references to DOM elements which are
-	 * required by the presentation. If a required element is
-	 * not found, it is created.
-	 */
-	function setupDOM() {
-
-		// Prevent transitions while we're loading
-		dom.slides.classList.add( 'no-transition' );
-
-		
-		dom.wrapper.classList.remove( 'no-hover' );
-
-		// Background element
-		dom.background = createSingletonNode( dom.wrapper, 'div', 'backgrounds', null );
-
-		// Progress bar
-		dom.progress = createSingletonNode( dom.wrapper, 'div', 'progress', '<span></span>' );
-		dom.progressbar = dom.progress.querySelector( 'span' );
-
-		// Arrow controls
-		dom.controls = createSingletonNode( dom.wrapper, 'aside', 'controls',
-			'<button class="navigate-left" aria-label="previous slide"><div class="controls-arrow"></div></button>' +
-			'<button class="navigate-right" aria-label="next slide"><div class="controls-arrow"></div></button>' +
-			'<button class="navigate-up" aria-label="above slide"><div class="controls-arrow"></div></button>' +
-			'<button class="navigate-down" aria-label="below slide"><div class="controls-arrow"></div></button>' );
-
-		// Slide number
-		dom.slideNumber = createSingletonNode( dom.wrapper, 'div', 'slide-number', '' );
-
-		// Overlay graphic which is displayed during the paused mode
-		createSingletonNode( dom.wrapper, 'div', 'pause-overlay', null );
-
-		dom.wrapper.setAttribute( 'role', 'application' );
-
-		// There can be multiple instances of controls throughout the page
-		dom.controlsLeft = toArray( document.querySelectorAll( '.navigate-left' ) );
-		dom.controlsRight = toArray( document.querySelectorAll( '.navigate-right' ) );
-		dom.controlsUp = toArray( document.querySelectorAll( '.navigate-up' ) );
-		dom.controlsDown = toArray( document.querySelectorAll( '.navigate-down' ) );
-		dom.controlsPrev = toArray( document.querySelectorAll( '.navigate-prev' ) );
-		dom.controlsNext = toArray( document.querySelectorAll( '.navigate-next' ) );
-
-
-		// The right and down arrows in the standard reveal.js controls
-		dom.controlsRightArrow = dom.controls.querySelector( '.navigate-right' );
-		dom.controlsDownArrow = dom.controls.querySelector( '.navigate-down' );
-
-		//dom.statusDiv = createStatusDiv();
-	}
-
-	/**
-	 * Creates an HTML element and returns a reference to it.
-	 * If the element already exists the existing instance will
-	 * be returned.
-	 */
-	function createSingletonNode( container, tagname, classname, innerHTML ) {
-
-		// Find all nodes matching the description
-		var nodes = container.querySelectorAll( '.' + classname );
-
-		// Check all matches to find one which is a direct child of
-		// the specified container
-		for( var i = 0; i < nodes.length; i++ ) {
-			var testNode = nodes[i];
-			if( testNode.parentNode === container ) {
-				return testNode;
-			}
-		}
-
-		// If no node was found, create it now
-		var node = document.createElement( tagname );
-		node.className = classname;
-		if( typeof innerHTML === 'string' ) {
-			node.innerHTML = innerHTML;
-		}
-		container.appendChild( node );
-
-		return node;
-
-	}
-
-	/**
-	 * Registers a listener to postMessage events, this makes it
-	 * possible to call all reveal.js API methods from another
-	 * window. 
-	 *
-	 */
-	function setupPostMessage() {
-
-		if( config.postMessage ) {
-			window.addEventListener( 'message', function ( event ) {
-				var data = event.data;
-
-				// Make sure we're dealing with JSON
-				if( typeof data === 'string' && data.charAt( 0 ) === '{' && data.charAt( data.length - 1 ) === '}' ) {
-					data = JSON.parse( data );
-
-					// Check if the requested method can be found
-					if( data.method && typeof Reveal[data.method] === 'function' ) {
-						Reveal[data.method].apply( Reveal, data.args );
-					}
-				}
-			}, false );
-		}
-
-	}
-
-	/**
-	 * Binds all event listeners.
-	 */
-	function addEventListeners() {
-
-		eventsAreBound = true;
-
-		window.addEventListener( 'hashchange', onWindowHashChange, false );
-		window.addEventListener( 'resize', onWindowResize, false );
-
-		if( config.progress && dom.progress ) {
-			dom.progress.addEventListener( 'click', onProgressClicked, false );
-		}
-
-		
-
-		// Listen to click events, in case the device
-		// supports both
-		var pointerEvents = [ 'click' ];
-
-		pointerEvents.forEach( function( eventName ) {
-			dom.controlsLeft.forEach( function( el ) { el.addEventListener( eventName, onNavigateLeftClicked, false ); } );
-			dom.controlsRight.forEach( function( el ) { el.addEventListener( eventName, onNavigateRightClicked, false ); } );
-			dom.controlsUp.forEach( function( el ) { el.addEventListener( eventName, onNavigateUpClicked, false ); } );
-			dom.controlsDown.forEach( function( el ) { el.addEventListener( eventName, onNavigateDownClicked, false ); } );
-			dom.controlsPrev.forEach( function( el ) { el.addEventListener( eventName, onNavigatePrevClicked, false ); } );
-			dom.controlsNext.forEach( function( el ) { el.addEventListener( eventName, onNavigateNextClicked, false ); } );
-		} );
-
-	}
-
-	/**
-	 * Unbinds all event listeners.
-	 */
-	function removeEventListeners() {
-
-		eventsAreBound = false;
-
-		window.removeEventListener( 'hashchange', onWindowHashChange, false );
-		window.removeEventListener( 'resize', onWindowResize, false );
-
-		if ( config.progress && dom.progress ) {
-			dom.progress.removeEventListener( 'click', onProgressClicked, false );
-		}
-
-		[ 'click' ].forEach( function( eventName ) {
-			dom.controlsLeft.forEach( function( el ) { el.removeEventListener( eventName, onNavigateLeftClicked, false ); } );
-			dom.controlsRight.forEach( function( el ) { el.removeEventListener( eventName, onNavigateRightClicked, false ); } );
-			dom.controlsUp.forEach( function( el ) { el.removeEventListener( eventName, onNavigateUpClicked, false ); } );
-			dom.controlsDown.forEach( function( el ) { el.removeEventListener( eventName, onNavigateDownClicked, false ); } );
-			dom.controlsPrev.forEach( function( el ) { el.removeEventListener( eventName, onNavigatePrevClicked, false ); } );
-			dom.controlsNext.forEach( function( el ) { el.removeEventListener( eventName, onNavigateNextClicked, false ); } );
-		} );
-
-	}
-
-	/**
-	 * Extend object a with the properties of object b.
-	 * If there's a conflict, object b takes precedence.
-	 *
-	 * @param {object} a
-	 * @param {object} b
-	 */
-	function extend( a, b ) {
-
-		for( var i in b ) {
-			a[ i ] = b[ i ];
-		}
-
-		return a;
-
-	}
-
-	/**
-	 * Dispatches an event of the specified type from the
-	 * reveal DOM element.
-	 */
-	function dispatchEvent( type, args ) {
-
-		var event = document.createEvent( 'HTMLEvents', 1, 2 );
-		event.initEvent( type, true, true );
-		extend( event, args );
-		dom.wrapper.dispatchEvent( event );
-
-		// If we're in an iframe, post each reveal.js event to the
-		// parent window. Used by the notes plugin
-		if( config.postMessageEvents && window.parent !== window.self ) {
-			window.parent.postMessage( JSON.stringify({ namespace: 'reveal', eventName: type, state: getState() }), '*' );
-		}
-
-	}
-
-	/**
-	 * Stores the vertical index of a stack so that the same
-	 * vertical slide can be selected when navigating to and
-	 * from the stack.
-	 *
-	 * @param {HTMLElement} stack The vertical stack element
-	 * @param {string|number} [v=0] Index to memorize
-	 */
-	function setPreviousVerticalIndex( stack, v ) {
-
-		if( typeof stack === 'object' && typeof stack.setAttribute === 'function' ) {
-			stack.setAttribute( 'data-previous-indexv', v || 0 );
-		}
-
-	}
-
-
-	/**
-	 * Retrieves the vertical index which was stored using
-	 * #setPreviousVerticalIndex() or 0 if no previous index
-	 * exists.
-	 *
-	 * @param {HTMLElement} stack The vertical stack element
-	 */
-	function getPreviousVerticalIndex( stack ) {
-
-		if( typeof stack === 'object' && typeof stack.setAttribute === 'function' && stack.classList.contains( 'stack' ) ) {
-			// Prefer manually defined start-indexv
-			var attributeName = stack.hasAttribute( 'data-start-indexv' ) ? 'data-start-indexv' : 'data-previous-indexv';
-
-			return parseInt( stack.getAttribute( attributeName ) || 0, 10 );
-		}
-
-		return 0;
-
-	}
-
-
-
-	/**
-	 * Steps from the current point in the presentation to the
-	 * slide which matches the specified horizontal and vertical
-	 * indices.
-	 *
-	 * @param {number} [h=indexh] Horizontal index of the target slide
-	 * @param {number} [v=indexv] Vertical index of the target slide
-	 * @param {number} [f] Index of a fragment within the
-	 * target slide to activate
-	 * @param {number} [o] Origin for use in multimaster environments
-	 */
-	function slide( h, v, f, o ) {
-
-		// Remember where we were at before
-		previousSlide = currentSlide;
-
-		// Query all horizontal slides in the deck
-		var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
-
-		// Abort if there are no slides
-		if( horizontalSlides.length === 0 ) return;
-
-		// If no vertical index is specified and the upcoming slide is a
-		// stack, resume at its previous vertical index
-		if( v === undefined) {
-			v = getPreviousVerticalIndex( horizontalSlides[ h ] );
-		}
-
-		// If we were on a vertical stack, remember what vertical index
-		// it was on so we can resume at the same position when returning
-		if( previousSlide && previousSlide.parentNode && previousSlide.parentNode.classList.contains( 'stack' ) ) {
-			setPreviousVerticalIndex( previousSlide.parentNode, indexv );
-		}
-
-		// Remember the state before this slide
-		var stateBefore = state.concat();
-
-		// Reset the state array
-		state.length = 0;
-
-		var indexhBefore = indexh || 0,
-			indexvBefore = indexv || 0;
-
-		// Activate and transition to the new slide
-		indexh = updateSlides( HORIZONTAL_SLIDES_SELECTOR, h === undefined ? indexh : h );
-		indexv = updateSlides( VERTICAL_SLIDES_SELECTOR, v === undefined ? indexv : v );
-
-		// Update the visibility of slides now that the indices have changed
-		updateSlidesVisibility();
-
-		layout();
-
-		// Apply the new state
-		stateLoop: for( var i = 0, len = state.length; i < len; i++ ) {
-			// Check if this state existed on the previous slide. If it
-			// did, we will avoid adding it repeatedly
-			for( var j = 0; j < stateBefore.length; j++ ) {
-				if( stateBefore[j] === state[i] ) {
-					stateBefore.splice( j, 1 );
-					continue stateLoop;
-				}
-			}
-
-			document.documentElement.classList.add( state[i] );
-
-			// Dispatch custom event matching the state's name
-			dispatchEvent( state[i] );
-		}
-
-		// Clean up the remains of the previous state
-		while( stateBefore.length ) {
-			document.documentElement.classList.remove( stateBefore.pop() );
-		}
-
-		// Update the overview if it's currently active
-		if( isOverview() ) {
-			updateOverview();
-		}
-
-		// Find the current horizontal slide and any possible vertical slides
-		// within it
-		var currentHorizontalSlide = horizontalSlides[ indexh ],
-			currentVerticalSlides = currentHorizontalSlide.querySelectorAll( 'section' );
-
-		// Store references to the previous and current slides
-		currentSlide = currentVerticalSlides[ indexv ] || currentHorizontalSlide;
-
-		// Dispatch an event if the slide changed
-		var slideChanged = ( indexh !== indexhBefore || indexv !== indexvBefore );
-		if( slideChanged ) {
-			dispatchEvent( 'slidechanged', {
-				'indexh': indexh,
-				'indexv': indexv,
-				'previousSlide': previousSlide,
-				'currentSlide': currentSlide,
-				'origin': o
-			} );
-		}
-		else {
-			// Ensure that the previous slide is never the same as the current
-			previousSlide = null;
-		}
-
-		// Solves an edge case where the previous slide maintains the
-		// 'present' class when navigating between adjacent vertical
-		// stacks
-		if( previousSlide ) {
-			previousSlide.classList.remove( 'present' );
-			previousSlide.setAttribute( 'aria-hidden', 'true' );
-
-			// Reset all slides upon navigate to home
-			// Issue: #285
-			if ( dom.wrapper.querySelector( HOME_SLIDE_SELECTOR ).classList.contains( 'present' ) ) {
-				// Launch async task
-				setTimeout( function () {
-					var slides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.stack') ), i;
-					for( i in slides ) {
-						if( slides[i] ) {
-							// Reset stack
-							setPreviousVerticalIndex( slides[i], 0 );
-						}
-					}
-				}, 0 );
-			}
-		}
-
-
-		updateControls();
-		updateProgress();
-		updateSlideNumber();
-		
-		// Update the URL hash
-		writeURL();
-
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
-
-
-
-
-	Slide={
-		initialize: initialize,
-		configure: configure,
-		sync: sync,
-
-		// Navigation methods
-		slide: slide,
-		left: navigateLeft,
-		right: navigateRight,
-		up: navigateUp,
-		down: navigateDown,
-		prev: navigatePrev,
-		next: navigateNext,
-
-		// Returns an object with the available routes as booleans (left/right/top/bottom)
-		availableRoutes: availableRoutes,
-
-		// State checks
-		isOverview: isOverview,
-		isPaused: isPaused,
-		isAutoSliding: isAutoSliding,
-		isSpeakerNotes: isSpeakerNotes,
-
-		// Slide preloading
-		loadSlide: loadSlide,
-		unloadSlide: unloadSlide,
-
-		// Adds or removes all internal event listeners 
-		addEventListeners: addEventListeners,
-		removeEventListeners: removeEventListeners,
-
-		// Facility for persisting and restoring the presentation state
-		getState: getState,
-		setState: setState,
-
-		// Returns the indices of the current, or specified, slide
-		getIndices: getIndices,
-
-		// Returns an Array of all slides
-		getSlides: getSlides,
-
-		// Returns the total number of slides
-		getTotalSlides: getTotalSlides,
-
-		// Returns the slide element at the specified index
-		getSlide: getSlide,
-
-		// Returns the slide background element at the specified index
-		getSlideBackground: getSlideBackground,
-
-		// Returns the previous slide element, may be null
-		getPreviousSlide: function() {
-			return previousSlide;
-		},
-
-		// Returns the current slide element
-		getCurrentSlide: function() {
-			return currentSlide;
-		},
-
-		// Returns true if we're currently on the first slide
-		isFirstSlide: function() {
-			return ( indexh === 0 && indexv === 0 );
-		},
-
-		// Returns true if we're currently on the last slide
-		isLastSlide: function() {
-			if( currentSlide ) {
-				// Does this slide has next a sibling?
-				if( currentSlide.nextElementSibling ) return false;
-
-				// If it's vertical, does its parent have a next sibling?
-				if( isVerticalSlide( currentSlide ) && currentSlide.parentNode.nextElementSibling ) return false;
-
-				return true;
-			}
-
-			return false;
-		},
-
-		// Checks if reveal.js has been loaded and is ready for use
-		isReady: function() {
-			return loaded;
-		},
-
-
-
-	}
-
-	return Slide
-
+    // Remember which directions that the user has navigated towards
+	this.hasNavigatedRight = false,
+	this.hasNavigatedDown = false,
+    
+    this.addEventListeners=this.addEventListeners();
+    this.removeEventListeners=this.removeEventListeners();
 }
 
+SliderGenerator.prototype={
+
+    initialize: function(opt){
+        if(this.initialized) return 
+        this.initialized=true;
+
+        //console.log("Initalization");
+        //Cache references to key DOM elements
+		this.dom.wrapper = document.querySelector( '.presentr' );
+        this.dom.slides = document.querySelector( '.presentr .slides' );
+
+        // Copy options over to our config object
+        extend( this._options, opt );
+    
+        this.start();
+    },
+
+    configure: function(){
+        //Navigation Control
+        this.dom.controls.style.display = this.config.controls ? 'block' : 'none';
+        this.dom.controls.setAttribute( 'data-controls-layout', this.config.controlsLayout );
+        this.dom.controls.setAttribute( 'data-controls-back-arrows', this.config.controlsBackArrows );
+
+        //Progress Bar
+        this.dom.progress.style.display = this.config.progress ? 'block' : 'none';
+
+        //Image attribute
+        wrapArray(this.dom.wrapper.querySelectorAll('img[data-src], video[data-src], audio[data-src]')).forEach(function(element){
+            element.forEach(function(el){
+                el.setAttribute( 'src', el.getAttribute( 'data-src' ) );
+                el.setAttribute( 'data-lazy-loaded', '' );
+                el.removeAttribute( 'data-src' );
+            })
+        })
+
+        //background attribute
+        //document.querySelectorAll('input[value][type="checkbox"]:not([value=""])');
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+
+        wrapArray(this.dom.wrapper.querySelectorAll('section[data-background]:not([data-background=""])')).forEach(function(element){
+            element.forEach(function(el){
+                const background_att=el.getAttribute('data-background');
+                const repeat_att=el.getAttribute('data-background-repeat');
+                const backgroundSize=el.getAttribute('data-background-size');
+                if(pattern.test(background_att)){
+                    el.style=`background: url(${background_att}); `;
+                }else{
+                    el.style=`background: ${background_att}; `;
+                }
+                if(repeat_att){
+                    el.style["background-repeat"]='repeat';
+                }
+                if(backgroundSize){
+                    el.style["background-size"]=backgroundSize;
+                }else{
+                    el.style["background-size"]='cover';
+                }
+                
+                el.removeAttribute('data-background');
+                el.removeAttribute('data-background-repeat');
+                el.removeAttribute('data-background-size');
+            })
+        });
+
+        wrapArray(this.dom.wrapper.querySelectorAll('section[data-background-video]:not([data-background-video=""])')).forEach(function(element){
+            element.forEach(function(el){
+                const origin=el.innerHTML;
+                el.innerHTML="";
+                const video_src=el.getAttribute('data-background-video');
+                const video = createSingletonNode(el, 'video','myVideo',
+                `<source src="${video_src}" type="video/mp4"> Your browser does not support HTML5 video.`
+                )
+                el.querySelectorAll('video').forEach(function(e){
+                    e.autoplay=true;
+                    e.loop=true;
+                    e.muted=true;
+                    e.load();
+                    console.log(e)
+                })
+                const content=createSingletonNode(el,'div','video-content',origin);
+                el.removeAttribute('data-background-video')
+            })
+        });
+
+
+
+
+    },
+
+    start: function(){
+
+        // Make sure we've got all the DOM elements we need
+        this.setUpDom();
+        // Updates the presentation to match the current configuration values
+		this.configure();
+
+        // Resolve slides and their fragments
+        const {fragmentGroupPrefix} = this._options;
+        var hSlides=this.dom.wrapper.querySelectorAll(this._options.HORIZONTAL_SLIDES_SELECTOR);
+        //console.log(hSlides);
+        for(const hslideElement of hSlides){
+            const groupIndexes=new Map();
+            const vSlides=hslideElement.querySelectorAll(this._options.VERTICAL_SLIDES_SELECTOR);
+            //console.log(vSlides);
+            var cacheVslides=[];
+            if(Array.from(vSlides).length>0){
+                for(const vslideElement of vSlides){
+                    const fragments=Array.from(vslideElement.querySelectorAll(this._options.FRAGMENTS_SELECTOR)).map(v=>[v]);
+                    //console.log(fragments);
+                    for(let i=0; i<fragments.length; i++){
+                        const group=Array.from(fragments[i][0].classList)
+                            .find(v=> v.startsWith(fragmentGroupPrefix));
+        
+                        if (group) {
+                            //console.log(group)
+                            if (groupIndexes.has(group)) {
+                                const [arr] = fragments.splice(i, 1);
+                                fragments[groupIndexes.get(group)].push(arr[0]);
+                                i--;
+                            } else {
+                                groupIndexes.set(group, i);
+                            }
+                        } 
+                    }
+                    cacheVslides.push({
+                        el:vslideElement,
+                        fragments,
+                        fragmentIndex:0
+                    })
+                }
+            }else{
+                const fragments=Array.from(hslideElement.querySelectorAll(this._options.FRAGMENTS_SELECTOR)).map(v=>[v]);
+                //console.log(fragments);
+                for(let i=0; i<fragments.length; i++){
+                    const group=Array.from(fragments[i][0].classList)
+                        .find(v=> v.startsWith(fragmentGroupPrefix));
+    
+                    if (group) {
+                        //console.log(group)
+                        if (groupIndexes.has(group)) {
+                            const [arr] = fragments.splice(i, 1);
+                            fragments[groupIndexes.get(group)].push(arr[0]);
+                            i--;
+                        } else {
+                            groupIndexes.set(group, i);
+                        }
+                    } 
+                }
+                cacheVslides.push({
+                    el:"",
+                    fragments,
+                    fragmentIndex:0
+                })
+            }
+            this._slides.push({
+                el:hslideElement,
+                cacheVslides,
+                vSlidesIndex:0
+            });
+            
+        }
+        //console.log(this._slides)
+        // Trigger
+        //console.log(this._slides);
+        this.jumpHSlide(this._options.slideIndex || 0);
+        this.updateControls();
+        this.updateProgress();
+        //console.log(this._slides)
+    },
+
+    setUpDom: function(){
+        // Progress bar
+		this.dom.progress = createSingletonNode( this.dom.wrapper, 'div', 'progress', '<span></span>' );
+        this.dom.progressbar = this.dom.progress.querySelector( 'span' );
+        //console.log(this.dom.progress)
+
+        // Arrow controls
+		this.dom.controls = createSingletonNode( this.dom.wrapper, 'aside', 'controls',
+        '<button name="leftArrow" class="navigate-left" aria-label="previous slide"><div class="controls-arrow"></div></button>' +
+        '<button name="rightArrow" class="navigate-right" aria-label="next slide"><div class="controls-arrow"></div></button>' +
+        '<button name="upArrow" class="navigate-up" aria-label="above slide"><div class="controls-arrow"></div></button>' +
+        '<button name="downArrow" class="navigate-down" aria-label="below slide"><div class="controls-arrow"></div></button>' );
+
+        this.dom.controlsLeft= wrapArray(this.dom.wrapper.querySelectorAll('.navigate-left'));
+        this.dom.controlsRight=wrapArray(this.dom.wrapper.querySelectorAll('.navigate-right'));
+        this.dom.controlsUp=wrapArray(this.dom.wrapper.querySelectorAll('.navigate-up'));
+        this.dom.controlsDown=wrapArray(this.dom.wrapper.querySelectorAll('.navigate-down'));
+        
+
+        // The right and down arrows in the standard reveal.js controls
+		this.dom.controlsRightArrow = this.dom.controls.querySelector( '.navigate-right' );
+        this.dom.controlsDownArrow = this.dom.controls.querySelector( '.navigate-down' );
+
+    },
+
+    availableRoutes: function(){
+        var verticalSlides=this._slides[this._hslideIndex].cacheVslides;
+        var routes={
+            left: this._hslideIndex>0,
+            right: this._hslideIndex<this._slides.length-1,
+            up: this._slides[this._hslideIndex].vSlidesIndex>0,
+            down: this._slides[this._hslideIndex].vSlidesIndex <  verticalSlides.length-1,
+        }
+        return routes;
+    },
+
+    updateProgress: function(){
+        //console.log(this.dom.wrapper.offsetWidth)
+        // Update progress if enabled
+		if( this.config.progress && this.dom.progressbar ) {
+			this.dom.progress.style.width = this.getProgress() * this.dom.wrapper.offsetWidth + 'px';
+		}
+    },
+
+    getProgress: function(){
+        var totalCount=this.totalSlides;
+        var pastCount=this.pastSlideCount;
+
+        if(this._currentSlide){
+            var allFragments= this._currentSlide.el.querySelectorAll('.frag');
+            // If there are fragments in the current slide those should be
+            // accounted for in the progress.
+            if(allFragments.length>0){
+                var visibleFragments=this._currentSlide.el.querySelectorAll('.active-frag');
+                // This value represents how big a portion of the slide progress
+				// that is made up by its fragments (0-1)
+				var fragmentWeight = 0.9;
+
+				// Add fragment progress to the past slide count
+				pastCount += ( visibleFragments.length / allFragments.length ) * fragmentWeight;
+
+            }
+            
+        }
+        //console.log(pastCount/(totalCount-1));
+        return pastCount/(totalCount-1);
+    },
+
+    updateControls: function(){
+        var routes=this.availableRoutes();
+        //console.log(routes);
+        this.dom.controlsLeft.concat(this.dom.controlsRight)
+                                .concat(this.dom.controlsUp)
+                                .concat(this.dom.controlsDown).forEach(function(node){
+                                    node.forEach(function(el){
+                                        el.classList.remove('enabled');
+                                        el.setAttribute('disabled','disabled');
+                                    })
+        });
+        if(routes.left) this.dom.controlsLeft.forEach(function(node){ node.forEach(function(el){el.classList.add('enabled'); el.removeAttribute('disabled');})});
+        if(routes.right) this.dom.controlsRight.forEach(function(node){ node.forEach(function(el){el.classList.add('enabled'); el.removeAttribute('disabled');})});
+        if(routes.up) this.dom.controlsUp.forEach(function(node){ node.forEach(function(el){el.classList.add('enabled'); el.removeAttribute('disabled');})});
+        if(routes.down) this.dom.controlsDown.forEach(function(node){ node.forEach(function(el){el.classList.add('enabled'); el.removeAttribute('disabled');})});
+    
+
+    
+        if(this.config.controlsTutorial){
+            if(!this.hasNavigatedDown && routes.down){
+                this.dom.controlsDownArrow.classList.add('highlight');
+            }else{
+                this.dom.controlsDownArrow.classList.remove('highlight');
+                if(!this.hasNavigatedRight && routes.right && this._hslideIndex===0){
+                    this.dom.controlsRightArrow.classList.add('highlight');
+                }else{
+                    this.dom.controlsRightArrow.classList.remove('highlight');
+                }
+            }
+        }
+    
+    },
+
+    addEventListeners: function(){
+        document.addEventListener('keyup', e=>{
+            const match = cv => cv === e.code || cv === e.key;
+            const {shortcuts} = this._options;
+            const fns = ['nextSlide', 'previousSlide','upSlide','downSlide', 'lastSlide', 'firstSlide', 'nextFragment', 'previousFragment', 'upFragment','downFragment']; // Available shortcuts
+
+            // Find corresponding shortcut action
+            const target = Object.keys(shortcuts).find(v => {
+                const code = shortcuts[v];
+                return Array.isArray(code) ? code.find(match) : match(code);
+            });
+
+            target&& fns.includes(target) && this[target]();
+        })
+
+        
+        document.addEventListener('click',e=>{
+            //console.log(e.target.parentNode.className.includes('navigate-down'))
+            const match =cv => cv===e.target.parentNode.name || e.target.parentNode.className.includes(cv);
+            const {clickOptions} =this._options;
+            const fns =['nextFragment', 'previousFragment', 'upFragment','downFragment'];
+
+            // Find corresponding click action
+            const target = Object.keys(clickOptions).find(v => {
+                const code = clickOptions[v];
+                return Array.isArray(code) ? code.find(match) : match(code);
+            });
+
+            target&& fns.includes(target) && this[target]();
+        })
+
+        // console.log(document.querySelectorAll('.navigate-down'))
+
+        // wrapArray(document.querySelectorAll('.navigate-down')).forEach(function(el){console.log(el)});
+
+        // this.dom.controlsLeft.forEach(function(el){el.addEventListener('click', this.previousFragment, false)});
+        // this.dom.controlsRight.forEach(function(el){el.addEventListener('click', this.nextFragment, false)});
+        // this.dom.controlsUp.forEach(function(el){el.addEventListener('click', this.upFragment, false)});
+        // this.dom.controlsDown.forEach(function(el){el.addEventListener('click', this.downFragment, false)});
+    },
+
+    removeEventListeners:function(){
+        document.removeEventListener('keyup', e=>{
+            const match = cv => cv === e.code || cv === e.key;
+            const {shortcuts} = this._options;
+            const fns = ['nextSlide', 'previousSlide', 'upSlide','downSlide','lastSlide', 'firstSlide', 'nextFragment', 'previousFragment','upFragment','downFragment']; // Available shortcuts
+
+            // Find corresponding shortcut action
+            const target = Object.keys(shortcuts).find(v => {
+                const code = shortcuts[v];
+                return Array.isArray(code) ? code.find(match) : match(code);
+            });
+
+            target&& fns.includes(target) && this[target]();
+        })
+
+        document.removeEventListener('click',e=>{
+            const match =cv => cv===e.target.parentNode.name;
+            const {clickOptions} =this._options;
+            const fns =['nextFragment', 'previousFragment', 'upFragment','downFragment'];
+
+            // Find corresponding click action
+            const target = Object.keys(clickOptions).find(v => {
+                const code = clickOptions[v];
+                return Array.isArray(code) ? code.find(match) : match(code);
+            });
+
+            target&& fns.includes(target) && this[target]();
+        })
+    },
+
+    /* eslint-disable callback-return */
+    _emit: function(event, args = {}) {
+        for (const cb of this._boundEventListener[event]) {
+            if (cb({
+                presentr: this,
+                ...args
+            }) === false) {
+                return false;
+            }
+        }
+
+        //console.log(this._boundEventListener[event]);
+
+        return true;
+    },
+
+
+    firstSlide: function() {
+        this.jumpHSlide(0);
+    },
+
+    lastSlide: function() {
+        this.jumpHSlide(this._slides.length - 1);
+    },
+
+    upSlide: function(){
+        this.jumpVSlide(this._currentHSlide.vSlidesIndex - 1);
+    },
+
+    downSlide: function(){
+        this.hasNavigatedDown=true;
+        this.jumpVSlide(this._currentHSlide.vSlidesIndex + 1);
+    },
+
+    nextSlide: function() {
+        this.hasNavigatedRight=true;
+        this.jumpHSlide(this._hslideIndex + 1);
+    },
+
+    previousSlide: function() {
+        this.jumpHSlide(this._hslideIndex - 1);
+    },
+
+    jumpVSlide: function(index) {
+        const {_options} = this;
+        const slide = this._currentHSlide;
+
+        if (!this._emit('beforeSlide', {
+            from: slide.vSlidesIndex,
+            to: index
+        })) return;
+
+        // Jump to next / previous slide if no further fragments
+        if (index < 0 || index>=slide.cacheVslides.length) {
+            return false;
+        }
+
+        slide.vSlidesIndex=index;
+
+        const {classes} = _options;
+        const cs = wrapArray(classes.currentVSlide);
+        const ps = wrapArray(classes.previousVSlide);
+        const ns = wrapArray(classes.nextVSlide);
+
+        for (let i = 0; i < slide.cacheVslides.length; i++) {
+            const classl = slide.cacheVslides[i].el.classList;
+            classl.remove(...ps);
+            classl.remove(...ns);
+            classl.remove(...cs);
+            if (i === index) {
+                classl.remove(...ps);
+                classl.remove(...ns);
+                classl.add(...cs);
+            } else if (i < index) {
+                classl.remove(...cs);
+                classl.add(...ps);
+            } else if (i > index) {
+                classl.remove(...cs);
+                classl.add(...ns);
+            }
+        }
+
+        // Fire events
+        this._emit('slide');
+        this._emit('action');
+        this.updateControls();
+        this.updateProgress();
+        return true;
+    },
+
+
+
+    jumpHSlide: function(index) {
+        const {_slides, _options} = this;
+
+        // Validate
+        if (index < 0 || index >= _slides.length) {
+            return false;
+        }
+
+        if (!this._emit('beforeSlide', {
+            from: this._hslideIndex,
+            to: index
+        })) return;
+
+         // Apply index
+         this._hslideIndex = index;
+
+        const {classes} = _options;
+        const cs = wrapArray(classes.currentHSlide);
+        const ps = wrapArray(classes.previousHSlide);
+        const ns = wrapArray(classes.nextHSlide);
+
+        for (let i = 0; i < _slides.length; i++) {
+            const classl = _slides[i].el.classList;
+
+            if (i === index) {
+                classl.remove(...ps);
+                classl.remove(...ns);
+                classl.add(...cs);
+                if(_slides[index].cacheVslides && _slides[index].cacheVslides.length>1){
+                    this.jumpVSlide(_slides[index].vSlidesIndex);
+                }
+            } else if (i < index) {
+                classl.remove(...cs);
+                classl.add(...ps);
+            } else if (i > index) {
+                classl.remove(...cs);
+                classl.add(...ns);
+            }
+        }
+        // Fire event
+        this._emit('slide');
+        this._emit('action');
+        this.updateControls();
+        this.updateProgress();
+        return true;
+    },
+
+    upFragment:function(){
+        this.jumpFragment(this._currentVSlide.fragmentIndex - 1, "v");
+    },
+
+    downFragment:function(){
+        this.hasNavigatedDown=true;
+        this.jumpFragment(this._currentVSlide.fragmentIndex + 1, "v");
+    },
+
+    nextFragment: function() {
+        this.hasNavigatedRight=true;
+        if(this._currentVSlide){
+            this.jumpFragment(this._currentVSlide.fragmentIndex + 1, "h");
+        }else{
+            this.nextSlide();
+        }
+    },
+
+    previousFragment: function() {
+        if(this._currentVSlide){
+            this.jumpFragment(this._currentVSlide.fragmentIndex - 1, "h");
+        }else{
+            this.previousSlide();
+        }
+    },
+
+    jumpFragment: function(index, direction) {
+        const slide = this._currentVSlide;
+
+        if (!this._emit('beforeFragment', {
+            from: slide.fragmentIndex,
+            to: index
+        })) return;
+
+        // Jump to next / previous slide if no further fragments
+        if (index < 0) {
+            if(direction==='v'){
+                return this.upSlide();
+            }else{
+                return this.previousSlide();
+            }
+        } else if (index > slide.fragments.length) {
+            if(direction==='v'){
+                return this.downSlide();
+            }else{
+                return this.nextSlide();
+            }
+        }
+
+        slide.fragmentIndex = index;
+
+        // Apply class for previous and current fragment(s)
+        const {activeFragment, currentFragment} = this._options.classes;
+        const {fragments} = slide;
+
+        const af = wrapArray(activeFragment);
+        const cf = wrapArray(currentFragment);
+        for (let i = 0; i < fragments.length; i++) {
+            for (const sf of fragments[i]) {
+                sf.classList.remove(...cf);
+                sf.classList.remove(...af);
+
+                if (i < (index - 1)) {
+                    sf.classList.add(...af);
+                } else if (i === (index - 1)) {
+                    sf.classList.add(...af);
+                    sf.classList.add(...cf);
+                }
+            }
+        }
+
+        // Fire events
+        this._emit('fragment');
+        this._emit('action');
+        this.updateControls();
+        this.updateProgress();
+        return true;
+    },
+
+    get _currentHSlide(){
+        return this._slides[this._hslideIndex];
+    },
+
+    get _currentVSlide(){
+        const index=this._slides[this._hslideIndex].vSlidesIndex;
+        return this._slides[this._hslideIndex].cacheVslides[index];
+    },
+
+    get _currentSlide(){
+        if(this._slides[this._hslideIndex].cacheVslides.length>1){
+            return this._currentVSlide;
+        }else{
+            return this._currentHSlide;
+        }
+    },
+
+    get totalSlides() {
+        var totalCount=0;
+        this._slides.forEach(function(hSlide){
+            totalCount+=hSlide.cacheVslides.length;
+        });
+        return totalCount;
+    },
+
+    get pastSlideCount(){
+        var totalCount=0;
+        const curVSlideIndex=this._slides[this._hslideIndex].vSlidesIndex;
+
+        for(var i=0; i<this._hslideIndex; i++){
+            totalCount+=this._slides[i].cacheVslides.length;
+        }
+        totalCount+=curVSlideIndex;
+        return totalCount;
+    },
+
+    get globalFragmentCount() {
+        return this._slides.reduce((acc, cv) => acc + cv.fragments.length, 0);
+    },
+
+    get totalFragments() {
+        return this._currentVSlide.fragments.length;
+    },
+
+    get slideIndex() {
+        return this._hslideIndex;
+    },
+
+    get fragmentIndex() {
+        return this._currentVSlide.fragmentIndex;
+    },
+}
