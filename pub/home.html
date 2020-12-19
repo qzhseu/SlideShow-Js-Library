@@ -55,7 +55,7 @@
                     </li>
                     <li>
                         <p>Create a "SlideDanceGenerator" and call the create the function.</p>
-                        <pre class='hljs'><code class='language-js hljs javascript'>const sg=new SlideDanceGenerator();<br>sg1.create()</code></pre>  
+                        <pre class='hljs'><code class='language-js hljs javascript'>const sg=new SlideDanceGenerator();<br>sg.create()</code></pre>  
                     </li>
                     <li>
                         <p>
@@ -83,17 +83,18 @@
 
 &lt;script&gt;
     let slide1=document.querySelector('.slide1');
-    const sg1=new SlideDanceGenerator(slide1)
-    sg1.create()
+    const sg1=new SlideDanceGenerator(slide1);
+    sg1.create();
 
     let slide2=document.querySelector('.slide2');
-    const sg2=new SlideDanceGenerator(slide2)
-    sg2.create()
+    const sg2=new SlideDanceGenerator(slide2);
+    sg2.create();
 &lt;/script&gt;</code></pre>
                 </ol>
                 <p>
-                    If you want to show code block with code syntax highlight in your slide, you can use external modules like <a href="https://highlightjs.org/">highlight.js.</a>
-                    Otherwise your code will be displayed in plain text.
+                    If you want to show code block, your code will be displayed as plain text on the slide. 
+                    But if you want to present code with code syntax highlight, you can use external modules like
+                    <a href="https://highlightjs.org/">highlight.js.</a> and so on.
                 </p>
             </div>
             <div class="container block">
