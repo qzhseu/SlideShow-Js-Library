@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+	<head>
+		<link rel="stylesheet" href="/css/slidedance.css">
+        <link rel="stylesheet" href="/css/theme/black.css" id="theme">
+
+        <!-- <link rel="stylesheet"
+      href="//unpkg.com/@highlightjs/cdn-assets@10.4.1/styles/default.min.css">
+<script src="//unpkg.com/@highlightjs/cdn-assets@10.4.1/highlight.min.js"></script> -->
+
+        <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script defer type="text/javascript" src="./js/slideDance.js"></script>
+        <script defer type="text/javascript" src='./slideExample.js'></script>
+
+	</head>
+	<body>
+		<div class="slideDance">
+			<div class="slides">
+                <slide>
+                    <h2 data-fontFamily="'Brush Script MT', cursive">Slide.js</h2>
+                    <p>
+                        Slide.js enables you to create amazing slides using HTML. This demo will show you some examples of features.
+                    </p>
+                    <p>Home Page: <a href="/">Home</a></p>
+                </slide>
+                <slide>
+                    <h2>Edit slides</h2>
+                    <p>Try to press "SHIFT" and click the header at the same time.</p>
+                    <p>After the selected box appears, you can drag it to any position, 
+                        adjust the size by dragging the circles at the four corners, and  
+                        click the circle in the top middle to rotate it. Press "SHIFT" and 
+                        click other element to switch element. You can press o to exit the edit mode.</p>
+                </slide>
+                <slide>
+                    <h2>Fragment</h2>
+                    <fragment>Click the <italic>Right Arrow</italic></fragment>
+                    <fragment>to go through</fragment>
+                    <span>
+                        <fragment>a</fragment>
+                        <fragment>fragmented</fragment>
+                        <fragment>slide</fragment>
+                    </span>
+                </slide>
+                <slide>
+                    <slide>
+                        <h2>vertical slides</h2>
+                        <p>
+                            Slide can be nested into other slide.
+                        </p>
+                        <p>
+                            Use <italic>Down Arrow</italic> to navigate all vertical slides.
+                        </p>
+                    </slide>
+                    <slide>
+                        <h2>Vertical Slide level 1</h2>
+                        <p> Nested slides are useful to add additional details under the horizontal slide. </p>
+                    </slide>
+                    <slide>
+                        <h2>Vertical Slide level 2</h2>
+                        <p>Now you can go back</p>
+                    </slide>
+                </slide>
+                <slide>
+                    <slide>
+                        <h2>An unordered list</h2>
+                        <ul>
+                            <li>Coffee</li>
+                            <li>Tea</li>
+                            <li>Milk</li>
+                            <li>Other...</li>
+                        </ul>  
+                    </slide>
+                    <slide>
+                        <h2>An ordered list</h2>
+                        <ol>
+                            <li>Coffee</li>
+                            <li>Tea</li>
+                            <li>Milk</li>
+                            <li>...</li>
+                        </ol> 
+                    </slide>
+                    <slide>
+                        <h2>Grid Layout</h2>
+                        <div class="grid-container">
+                            <fragment>
+                                <div class="grid-item">
+                                    <h4>header 1</h4>
+                                    <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit accusantium doloremque laudantium.</p>
+                                </div>
+                            </fragment>
+                            <fragment>
+                                <div class="grid-item">
+                                    <h4>header 2</h4>
+                                    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco non proident voluptatem accusantium.</p>
+                                </div>
+                            </fragment>
+                            <fragment>
+                                <div class="grid-item">
+                                    <h4>header 3</h4>
+                                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                                </div>
+                            </fragment>
+                        </div>
+                    </slide>
+                    <slide>
+                        <h2>Nice Table</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Gender</th>
+                                    <th>Age</th>
+                                    <th>Department</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Alex</td>
+                                    <td>Male</td>
+                                    <td>23</td>
+                                    <td>ECE</td>
+                                </tr>
+                                <tr>
+                                    <td>Amy</td>
+                                    <td>Female</td>
+                                    <td>22</td>
+                                    <td>CSC</td>
+                                </tr>
+                                <tr>
+                                    <td>Ray</td>
+                                    <td>Male</td>
+                                    <td>20</td>
+                                    <td>MIE</td>
+                                </tr>
+                                <tr>
+                                    <td>Zoe</td>
+                                    <td>Female</td>
+                                    <td>24</td>
+                                    <td>CSC</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </slide>
+                </slide>
+                <slide>
+                    <h2>Add Image</h2>
+                    <fragment>
+                        <img width="700" height="400" data-src="https://www.click2houston.com/resizer/RpgMd5a6ZnjFCMkUBA4lcHZUKJ0=/1280x720/smart/filters:format(jpeg):strip_exif(true):strip_icc(true):no_upscale(true):quality(65)/cloudfront-us-east-1.images.arcpublishing.com/gmg/WMVY6H37ERA53NELKEYPQ6BXDE.jpg">
+                    </fragment>
+                </slide>
+                <slide>
+                    <h2>Add Vedio</h2>
+                    <fragment>
+                        <video width="700" height="400" data-src="https://csc309.s3.us-east-2.amazonaws.com/Autumn+-+18420.mp4" type="video/mp4">
+                    </fragment>
+                </slide>
+                <slide>
+                    <slide data-background="#163a22">
+                        <h2>Set backgrounds</h2>
+                        <p>You can assign color code to <italic>data-background</italic> to change the background color. 
+                            All CSS color formats are supported.
+                        </p>
+                    </slide>
+                    <slide data-background="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHw%3D&w=1000&q=80">
+                        <background-content>
+                            <h2>Image backgrounds</h2>
+                            <p>You can add content under <italic>background-content tag</italic></p>
+                        </background-content>
+                    </slide>
+                    <slide data-background="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHw%3D&w=1000&q=80" data-background-repeat="repeat" data-background-size="300px">
+                        <h2>TILED BACKGROUNDS</h2>
+                    </slide>
+                    <slide data-background-video="https://csc309.s3.us-east-2.amazonaws.com/Autumn+-+18420.mp4">
+                        <background-content>
+                            <h2>vedio background</h2>
+                        </background-content>
+                    </slide>
+                    <slide data-background="https://compote.slate.com/images/697b023b-64a5-49a0-8059-27b963453fb1.gif">
+                        <h2>Gifs background</h2>
+                    </slide>
+                </slide>
+                <slide>
+                    <slide>
+                        <h2>CODE</h2>
+                        <pre><code data-code-trim>
+                            import React, { useState } from 'react';
+
+                            function Example() {
+                                const [time, setTime] = useState(0);
+
+                                return (
+                                    ...
+                                );
+                            }
+                        </code></pre>
+                    </slide>
+                    <slide>
+                        <h2>Highlight CODE</h2>
+                        <pre><code data-code-trim data-hightlight-line="3,13-17,25">
+                            import React, { useState } from 'react';
+
+                            function ExampleOne() {
+                                const [time, setTime] = useState(0);
+                                return (
+                                    &lt;h2&gt; Time: {time} &lt;/h2&gt;
+                                );
+                            }
+
+                            function ExampleTwo() {
+                                const [year, setYear] = useState(1990);
+
+                                return (
+                                    &lt;h2&gt; Year: {year} &lt;/h2&gt;
+                                    &lt;button onClick={() => setYear(year + 1)}&gt;
+                                        Add Year
+                                    &lt;/button&gt;
+                                );
+                            }
+
+                            function ExampleThree() {
+                                const [gender, setGender] = useState(1);
+
+                                return (
+                                    &lt;h2&gt; Gender: {gender} &lt;/h2&gt;
+                                );
+                            }
+                        </code></pre>
+                    </slide>
+                </slide>
+
+                <slide>
+                    <h2>thank you for watching</h2>
+                    <p>Press L to return to the first slide</p>
+                </slide>
+            </div>
+		</div>
+
+		
+	</body>
+</html>
+

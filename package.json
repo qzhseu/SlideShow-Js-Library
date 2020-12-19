@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/csc309-fall-2020/js-library-quzhaohu#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "highlight.js": "^10.4.1"
   }
 }

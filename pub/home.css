@@ -1,0 +1,28 @@
+.topSlideShow{
+    position: relative;
+    margin: 0 auto;
+    height: 500px;
+    width: 100%;
+    /* border: 2px solid rgb(255, 0, 0); */
+}
+
+.container{
+    width: 1200px;
+    max-width: 100%;
+    padding: 0 15px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.block{
+    margin-bottom: 80px;
+}
+
+.main-content h1 {
+    font-size: 3em;
+    font-weight: 500;
+}
+
+.main-content h1, h2, h3 {
+    color: #5e25e2;
+}

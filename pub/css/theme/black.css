@@ -1,220 +1,257 @@
-/*********************************************
- * GLOBAL STYLES
- *********************************************/
- body {
-    background: #222;
-    background-color: #222; }
-  
-.presentr {
-    font-family: 'Satisfy', Helvetica, sans-serif, ;
-    font-size: 40px;
-    font-weight: normal;
-    color: #fff; 
+:root {
+    --background: rgb(41, 40, 40);
+    --fontColor: rgb(255, 255, 255); 
+    --tableHeaderColor: rgb(0, 0, 0);
+    --codeBackgroundColor: rgb(45, 42, 51);
+    --progressBarColor: #887bff; 
+    --controlButtonColor: #887bff; 
+    --selectBoxColor: #ff9100; 
+    --selectBoxColor_0: #ff9100; 
+    --selectBoxColor_1: #f3ef1dd3;
+    --selectBoxColor_2: #39ebb5;
+    --selectBoxColor_3: #278dec;
+    --controlButtonHoverColor: rgb(220, 177, 245);
+    --tableBorderColor: #EEEEEE;
+    --fullwidth: 100%;
 }
 
-.presentr .slides > section,
-.presentr .slides > section > section {
-    line-height: 1.3;
-    font-weight: inherit; 
+
+/**General Attribute**/
+.slideDance {
+    font-family:"Times New Roman", Times, serif ;
+    height: 100%;
+    width: 100%;
+    font-size: 35px;
+    color: var(--fontColor);
+    background-color: var(--background);
 }
 
-/*********************************************
- * HEADERS
- *********************************************/
- .presentr h1,
- .presentr h2,
- .presentr h3,
- .presentr h4,
- .presentr h5,
- .presentr h6 {
-   margin: 0 0 20px 0;
-   color: #fff;
-   font-family: "Source Sans Pro", Helvetica, sans-serif;
-   font-weight: 600;
-   line-height: 1.2;
-   letter-spacing: normal;
-   text-transform: uppercase;
-   text-shadow: none;
-   word-wrap: break-word; 
+.slideDance .slides > slide,
+.slideDance .slides > slide > slide {
+    line-height: 1.2;
+}
+
+/**Header**/
+.slideDance h1,
+.slideDance h2,
+.slideDance h3,
+.slideDance h4,
+.slideDance h5,
+.slideDance h6 {
+   margin: 0 0 15px 0;
    text-align: center;
+   font-weight: 650;
+   line-height: 2.0; 
+   text-transform: uppercase;
+   word-wrap: break-word; 
 }
  
-.presentr h1 {
+.slideDance h1 {
    font-size: 2.5em; 
 }
  
-.presentr h2 {
+.slideDance h2 {
    font-size: 1.6em; 
 }
  
-.presentr h3 {
+.slideDance h3 {
    font-size: 1.3em; 
 }
  
-.presentr h4 {
+.slideDance h4 {
    font-size: 1em; 
 }
- 
-.presentr h1 {
-   text-shadow: none; 
+
+.slideDance h5 {
+   font-size: 0.8em; 
 }
 
-/*********************************************
- * OTHER
- *********************************************/
-.presentr p {
-    margin: 20px 100px;
-    line-height: 1.3; 
+/**Paragraph**/
+.slideDance p {
+    margin: 15px 100px;
     text-align: center;
 }
 
-.presentr strong,
-.presentr b {
+.slideDance b,
+.slideDance strong {
   font-weight: bold; 
 }
 
-.presentr em {
-    font-style: italic; 
+
+.slideDance italic {
+    font-style: italic;
 }
 
-.presentr code {
+/**Table**/
+.slideDance table {
+    margin: 0 auto; 
+    width: 80%;
+    border: 1px solid var(--tableBorderColor);
+}
+
+.slideDance table th{
+	background: var(--tableHeaderColor);
+    padding: 24px 10px;
+    font-size: 30px;
+}
+
+.slideDance table td{
+    text-align: left;
+    font-size: 24px;
+    padding: 0.3em 0.6em;
+    text-align: center; 
+    border-bottom: 1px solid var(--tableBorderColor);
+}
+
+.slideDance table tbody tr:last-child td {
+    border-bottom: none; 
+}
+
+/**Grid**/
+.slideDance .grid-container {
+    display: grid;
+    width: 100%;
+    height: 50%;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+    top:10%
+}
+
+.slideDance .grid-item {
+    text-align: center;
+}
+
+/**Progress Bar**/
+.slideDance .progressBar{
+    background: var(--progressBarColor); 
+}
+
+/**Image**/
+.slideDance img{
+    transition: all 1s linear; 
+}
+
+/**Number of page**/
+.slideDance .numberOfPage{
+    color: var(--fontColor);
+}
+
+/**Control button**/
+.quart {
+    background: var( --controlButtonColor);
+}
+
+.quart:hover {
+    background: var(--controlButtonHoverColor);
+}
+
+.controlsEdge .rightArrow:hover, .controlsEdge .upArrow:hover,
+.controlsEdge .downArrow:hover, .controlsEdge .leftArrow:hover{
+    color:var(--controlButtonHoverColor);
+}
+
+.controlsEdge .upArrow, .controlsEdge .downArrow, 
+.controlsEdge .rightArrow, .controlsEdge .leftArrow,
+.controlsEdge .upArrow-disable, .controlsEdge .downArrow-disable, 
+.controlsEdge .rightArrow-disable, .controlsEdge .leftArrow-disable{
+    color: var(--controlButtonColor);
+}
+
+/**Play button**/
+.slideDance .button.play{
+    border-color: var(--progressBarColor);
+    border-color: transparent transparent transparent var(--progressBarColor);
+}
+
+.slideDance .button.play:hover{
+    border-color: var(--controlButtonHoverColor);
+    border-color: transparent transparent transparent var(--controlButtonHoverColor);
+}
+
+/**Selected Element**/
+.slideDance .selectedElement{
+    cursor: all-scroll;
+    /* overflow : hidden; */
+    border : 1px solid var(--selectBoxColor)
+}
+
+.slideDance .selectedElement:hover{
+    animation-name: selectedBox;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes selectedBox{
+    0%   {border : 3px solid var(--selectBoxColor_0);}
+    25%  {border : 3px solid var(--selectBoxColor_1);}
+    50%  {border : 3px solid var(--selectBoxColor_2);}
+    100% {border : 3px solid var(--selectBoxColor_3);}
+}
+
+.slideDance .resizer-top-left, .slideDance .resizer-top-right, .slideDance .rotate,
+.slideDance .resizer-bottom-right, .slideDance .resizer-bottom-left{
+    width: 3px;
+    height: 3px;
+    position: absolute;
+    border-radius: 50%; 
+    background: rgba(255, 255, 255, 0);
+    animation-name: selectedBox;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    /* z-index: 1; */
+}
+.slideDance .resizer-top-left{
+    left: -5px;
+    top: -5px;
+    cursor: nwse-resize; 
+}
+
+.slideDance .resizer-top-right{
+    right: -5px;
+    top: -5px;
+    cursor: nesw-resize;
+}
+
+.slideDance .resizer-bottom-right{
+    right: -5px;
+    bottom: -5px;
+    cursor: nwse-resize;
+}
+
+.slideDance .resizer-bottom-left{
+    left: -5px;
+    bottom: -5px;
+    cursor: nesw-resize;
+}
+
+.slideDance .rotate{
+    right: 50%;
+    top: -5px;
+    cursor: alias;
+}
+
+/**Show Code**/
+.slideDance pre{
+    height: 300px;
+    background-color: var(--codeBackgroundColor);
+}
+
+.slideDance code{
     font-family: monospace;
     text-transform: none; 
 }
-  
-.presentr pre code {
+
+.slideDance pre code{
+    font-size: x-large;
     display: block;
-    padding: 5px;
+    padding: 20px;
     overflow: auto;
-    max-height: 400px;
+    max-width: 700px;
+    max-height: 85%;
     word-wrap: normal; 
+    transition: all 0.7s;
 }
 
-.presentr ol,
-.presentr dl,
-.presentr ul {
-  display: inline-block;
-  text-align: left;
-  margin: 0 0 0 1em; }
-
-.presentr ol {
-  list-style-type: decimal; }
-
-.presentr ul {
-  list-style-type: disc; }
-
-.presentr ul ul {
-  list-style-type: square; }
-
-.presentr ul ul ul {
-  list-style-type: circle; }
-
-.presentr ul ul,
-.presentr ul ol,
-.presentr ol ol,
-.presentr ol ul {
-  display: block;
-  margin-left: 40px; }
-
-.presentr table {
-    margin: 0 auto; 
-    border-collapse: collapse;
-    border-spacing: 0; 
+.slideDance pre code .lineNumber{
+    color: #a9a9a9;
 }
-  
-.presentr table th {
-    font-weight: bold; 
-}
-.presentr table th,
-.presentr table td {
-    text-align: left;
-    padding: 0.2em 0.5em 0.2em 0.5em;
-    border-bottom: 1px solid; 
-}
-  
-.presentr table th[align="center"],
-.presentr table td[align="center"] {
-    text-align: center; 
-}
-  
-.presentr table th[align="right"],
-.presentr table td[align="right"] {
-    text-align: right; 
-}
-  
-.presentr table tbody tr:last-child th,
-.presentr table tbody tr:last-child td {
-    border-bottom: none; 
-}
-  
-
-/*********************************************
- * LINKS
- *********************************************/
-.presentr a {
-    color: #887bff; 
-    text-decoration: none;
-    -webkit-transition: color .15s ease;
-    -moz-transition: color .15s ease;
-    transition: color .15s ease; 
-}
-  
-.presentr a:hover {
-    color: #beb7ff; 
-    text-shadow: none;
-    border: none; 
-}
-  
-.presentr .roll span:after {
-    color: #fff;
-    background: #392cad; 
-}
-
-/*********************************************
- * IMAGES
- *********************************************/
- .presentr section img {
-    margin: 15px 0px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 4px solid #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); 
-}
-  
-.presentr section img.plain {
-    border: 0;
-    box-shadow: none; 
-}
-  
-.presentr a img {
-    -webkit-transition: all .15s linear;
-    -moz-transition: all .15s linear;
-    transition: all .15s linear; 
-}
-  
-.presentr a:hover img {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: #887bff; 
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.55); 
-}
-
-/*********************************************
- * NAVIGATION CONTROLS
- *********************************************/
-.presentr .controls {
-    color: #887bff; 
-}
-
-/*********************************************
- * PROGRESS BAR
- *********************************************/
-.presentr .progress{
-    position: fixed;
-    background: #887bff; 
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0.8vh;
-    z-index: 1;
-    transition: all 1s;
-}
-  

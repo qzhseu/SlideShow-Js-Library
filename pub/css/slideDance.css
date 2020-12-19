@@ -1,0 +1,341 @@
+
+:root{
+    --opacity: 0.4;
+}
+
+html, body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    vertical-align: baseline;
+}
+
+.slideDance .slides {
+    display: none;
+}
+
+.slideDance .slides slide {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    filter: grayscale(100%);
+}
+
+.slideDance .slides .activeFragment {
+    transform: none;
+    transition: all 0.5s;
+    opacity: 1;
+}
+
+.slideDance .slides .fragment {
+    opacity: 0;
+    transform: translateY(-1vh);
+    transition: all 0.5s;
+}
+
+.slideDance background-content {
+    padding:  0px 30px;
+    color: #f1f1f1;
+    background-color: rgba(0, 0, 0, 0.644);
+    align-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+/**Vedio**/
+.slideDance .myVideo {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 100%; 
+    height: 100%;
+}
+
+.slideDance .videoBackground{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    min-width: 100%; 
+    min-height: 100%;
+}
+
+
+/**Control Arrows**/
+@keyframes arrow-bounce-right {
+    0%   {transform: rotate(135deg) translateX(0px);}
+    25%  {transform: rotate(135deg) translateX(5px);}
+    50%  {transform: rotate(135deg) translateX(-5px);}
+    100% {transform: rotate(135deg) translateX(0px);}
+}
+
+@keyframes arrow-bounce-down {
+    0%   {transform: rotate(-135deg) translateX(0px);}
+    25%  {transform: rotate(-135deg) translateX(5px);}
+    50%  {transform: rotate(-135deg) translateX(-5px);}
+    100% {transform: rotate(-135deg) translateX(0px);}
+}
+
+@keyframes arrow-bounce-right-edge{
+    0%   {transform: rotate(180deg) translateX(0px);}
+    25%  {transform: rotate(180deg) translateX(5px);}
+    50%  {transform: rotate(180deg) translateX(-5px);}
+    100% {transform: rotate(180deg) translateX(0px);}
+}
+
+@keyframes arrow-bounce-down-edge{
+    0%   {transform: rotate(-90deg) translateX(0px);}
+    25%  {transform: rotate(-90deg) translateX(5px);}
+    50%  {transform: rotate(-90deg) translateX(-5px);}
+    100% {transform: rotate(-90deg) translateX(0px);}
+}
+
+
+.slideDance .controls {
+    width: 6.9%;
+    padding-top: 6.9%;
+    border-radius: 50%;
+    position: absolute;
+    overflow: hidden;
+    right: 10px;
+    bottom: 10px;
+    top: auto;
+    left: auto;
+    transform: rotate(45deg);
+}
+
+.slideDance .quart {
+    position: absolute;
+    height: 50%;
+    width: 50%;
+    transition: all 0.4s;
+}
+
+.slideDance .quart:first-child {
+    top: 0;
+    left: 0;
+}
+.slideDance .quart:nth-child(2) {
+    top: 0;
+    left: 50%;
+}
+.slideDance .quart:nth-child(3) {
+    top: 50%;
+    left: 50%;
+}
+
+.slideDance .quart:nth-child(4) {
+    top: 50%;
+    left: 0;
+}
+
+.controls .upArrow, .controls .downArrow, 
+.controls .rightArrow, .controls .leftArrow,
+.controls .upArrow-disable, .controls .downArrow-disable, 
+.controls .rightArrow-disable, .controls .leftArrow-disable{
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 20%;
+    margin-top: -60%;
+    margin-left: 17%;
+    font-weight: bold;
+    font-size: 28px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+}
+
+.controls .upArrow-disable{
+    color: rgba(255, 255, 255, 0);
+    transform: rotate(45deg);
+}
+
+.controls .upArrow{
+    color: rgba(255, 255, 255, 0.3);
+    transform: rotate(45deg);
+}
+
+.controls .rightArrow-disable{
+    color: rgba(255, 255, 255, 0);
+    transform: rotate(135deg);
+} 
+
+.controls .rightArrow{
+    color: white;
+    transform: rotate(135deg);
+}
+
+.controls .rightArrow.highlightArrow{
+    animation-name: arrow-bounce-right;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.controls .leftArrow-disable{
+    color: rgba(255, 255, 255, 0);
+    transform: rotate(-45deg);
+}
+
+.controls .leftArrow{
+    color: rgba(255, 255, 255, 0.3);
+    transform: rotate(-45deg);
+}
+
+.controls .downArrow-disable{
+    color: rgba(255, 255, 255, 0);
+    transform: rotate(-135deg);
+}
+
+.controls .downArrow{
+    color: white;
+    transform: rotate(-135deg);
+}
+
+.controls .downArrow.highlightArrow{
+    animation-name: arrow-bounce-down;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.controlsEdge{
+    width: 100%;
+    height: 100%;
+}
+
+
+.controlsEdge .quartEdgeUp, .controlsEdge .quartEdgeRight, 
+.controlsEdge .quartEdgeDown, .controlsEdge .quartEdgeLeft{
+    position: absolute;
+    transition: all 0.4s;
+}
+
+.quartEdgeUp{
+    top: 0.5%;
+    left: 50%;
+}
+.quartEdgeRight{
+    top: 50%;
+    left: 97%;
+}
+.quartEdgeDown{
+    top: 92%;
+    left: 50%;
+}
+.quartEdgeLeft{
+    left: 1.5%;
+    top: 50%;
+}
+
+.controlsEdge .upArrow, .controlsEdge .downArrow, 
+.controlsEdge .rightArrow, .controlsEdge .leftArrow,
+.controlsEdge .upArrow-disable, .controlsEdge .downArrow-disable, 
+.controlsEdge .rightArrow-disable, .controlsEdge .leftArrow-disable{
+    cursor: pointer;
+    position: absolute;
+    width: auto;
+    font-weight: bold;
+    font-size: 40px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+}
+
+.controlsEdge .upArrow{
+    opacity: var(--opacity);
+    transform: rotate(90deg);
+}
+
+.controlsEdge .upArrow-disable{
+    opacity: 0;
+    transform: rotate(90deg);
+}
+
+.controlsEdge .downArrow{
+    transform: rotate(-90deg);
+}
+
+.controlsEdge .downArrow-disable{
+    opacity: 0;
+    transform: rotate(-90deg);
+}
+
+.controlsEdge .rightArrow{
+    transform: rotate(180deg);
+}
+
+.controlsEdge .rightArrow-disable{
+    opacity: 0;
+    transform: rotate(180deg);
+}
+
+.controlsEdge .leftArrow{
+    opacity: var(--opacity);
+    transform: rotate(0);
+}
+
+.controlsEdge .leftArrow-disable{
+    opacity: 0;
+    transform: rotate(0);
+}
+
+.controlsEdge .rightArrow.highlightArrow{
+    animation-name: arrow-bounce-right-edge;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.controlsEdge .downArrow.highlightArrow{
+    animation-name: arrow-bounce-down-edge;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+/**Progress Bar**/
+.slideDance .progressBar{ 
+    position: absolute;;
+    top: 0%;
+    left: 0%;
+    width: 0;
+    height: 0.8%;
+    z-index: 1;
+    transition: all 1.5s;
+}
+
+/**Number of page**/
+.slideDance .numberOfPage{
+    top: 1%;
+    left: 0.5%;
+    right: auto;
+    bottom: auto;
+    position: absolute;
+    font-size: 15px;
+}
+
+/**Play Button**/
+.slideDance .button.play {
+    position: absolute;
+    bottom: 1%;
+    left: 1%;
+    cursor: pointer;
+    right: auto;
+    top: auto;
+    width: 15px;
+    height: 15px;
+    border-width: 15px;
+    border-style: solid;
+    box-sizing: border-box;
+    border-width: 15px 0 15px 30px;
+  }
+
+
+
+
