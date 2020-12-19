@@ -1,4 +1,5 @@
 "use strict"; 
+hljs.initHighlightingOnLoad();
 const sg=new SlideDanceGenerator()
 sg.create({
     progress : true,
@@ -6,9 +7,17 @@ sg.create({
     autoplay : false,
     editMode : true,
     showNumberOfPage : true,
-    controlsPosition : 'edges', //'edges' or 'bottom-right',
+    controlsPosition : 'bottom-right', //'edges' or 'bottom-right',
     fontFamily : " 'Satisfy', Helvetica, sans-serif ",
     autoplayTimeInterval: 2000,
+    
+    onSlideChanged: function(){
+        console.log('SlideDance: Slide change');
+    },
+
+    onEnd: function(){
+        console.log('SlideDance: End');
+    }
 })
 
 

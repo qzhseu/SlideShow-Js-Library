@@ -1,13 +1,19 @@
 "use strict"; 
-
-const sg=new SlideDanceGenerator()
-sg.create({
+let slide1=document.querySelector('.slide1');
+const sg1=new SlideDanceGenerator(slide1)
+sg1.create({
     progress : true,
     controls : true,
     showNumberOfPage : true,
-    autoplay : true,
-    editMode : false,
+    autoplay : false,
+    editMode : true,
     controlsPosition : 'edges', //'edges' or 'bottom-right',
     fontFamily : " 'Satisfy', Helvetica, sans-serif ",
     autoplayTimeInterval: 2000,
+    onReady: function() {
+        console.log('SlideDance: Ready');
+    },
+    onSlideChanged: function(){
+        console.log('SlideDance: Slide change');
+    },
 })

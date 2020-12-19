@@ -2,7 +2,7 @@
 
 (function(global, document, $) { 
 
-	function SlideDanceGenerator() {
+	function SlideDanceGenerator(wrapperDom) {
         this.horizontalSlideIndex=0; // Index of Horizontal Slide
         this.verticalSlideIndex=0; // Index of vertical Slide
         this.slides=[]; // Structure of slides
@@ -11,7 +11,7 @@
         this.currentEditElement = null;
 
         //Record dom elements
-        this.wrapperDom={};
+        this.wrapperDom=wrapperDom;
         this.slidesDom={};
         this.controlsDom={};
         this.controlArrowsDom={};
@@ -27,18 +27,21 @@
             progress: true, // Whether or not to show progress bar
             keyboard: true, // Whether or not enable keyboard to control slides
             editMode: false, //Whether or not enable edit mode
-            gotoEdit:false,//Enable edit if editMode is true and gotoEdit is true
             autoplay:false, //Autoplay slide
             autoplayTimeInterval: 3000,
             pause: false, //Pause autoplay
             fontFamily: "'Times New Roman', Times, serif", //Set font family
-            showNumberOfPage:false, //Whether or not to show number of slides
+            showNumberOfPage:true, //Whether or not to show number of slides
+            onReady: function(){},
+            onSlideChanged: function(){},
+            onEnd: function(){},
         }
 
         //Support options
         this.selector={
             SlideDance : '.slideDance',
-            AllSlides: '.slideDance .slides',
+            // AllSlides: '.slideDance .slides',
+            AllSlides: '.slides',
             HorizontalSlideSelector : '.slides > slide',
             VerticalSlideSelector : 'slide',
             FragmentSelector : 'fragment',
@@ -52,8 +55,8 @@
             preVerticalSlide:['w','W'],
             nextVerticalSlide:['s','S'],
 
-            firstSlide: ['l', 'L'],
-            lastSlide: ['f', 'F'],
+            firstSlide: ['f', 'F'],
+            lastSlide: ['l', 'L'],
 
             autoPlayNextSlide : ['Space'],
             autoPlayPause : ['q','Q'],
@@ -243,11 +246,11 @@
 	SlideDanceGenerator.prototype = {
         create: function(opt){
             const {selector} = this;
-            this.wrapperDom = document.querySelector( selector.SlideDance );
-            this.slidesDom = document.querySelector( selector.AllSlides );
+            this.wrapperDom = this.wrapperDom ?  this.wrapperDom : document.querySelector( selector.SlideDance );
+            this.slidesDom = this.wrapperDom.querySelector( selector.AllSlides );
             setConfig(opt, this.configures);
             this.createDom();
-            this.initialize();
+            this.initialize(this.configures.onReady());
             this.startPresentation();
         },
 
@@ -280,16 +283,13 @@
                 this.controlsDom = this.wrapperDom.querySelectorAll('.controlsEdge');
             }
             
-            this.controlArrowsDom.upArrow = document.getElementsByName('upArrow');
-            this.controlArrowsDom.rightArrow = document.getElementsByName('rightArrow');
-            this.controlArrowsDom.downArrow = document.getElementsByName('downArrow');
-            this.controlArrowsDom.leftArrow = document.getElementsByName('leftArrow');
+            this.controlArrowsDom.upArrow = this.wrapperDom.querySelectorAll('[name="upArrow"]');
+            this.controlArrowsDom.rightArrow = this.wrapperDom.querySelectorAll('[name="rightArrow"]');
+            this.controlArrowsDom.downArrow = this.wrapperDom.querySelectorAll('[name="downArrow"]');
+            this.controlArrowsDom.leftArrow = this.wrapperDom.querySelectorAll('[name="leftArrow"]');
         },
 
-        initialize: function(){
-            console.log("Initialization")
-
-           
+        initialize: function(callback){
 
             const { fragment } = classesName;
             const {selector, progressBarDom, controlsDom, wrapperDom, configures, slidesDom, numberOfPage, slides, playButton} =this;
@@ -452,6 +452,8 @@
                     verticalSlidesIndex:0
                 })
             }
+
+            if (typeof callback == "function") callback(); 
         },
 
         startPresentation: function(){
@@ -645,35 +647,48 @@
         updateNumberOfPage: function(){
             var totalCount=this._totalSlides;
             var pastCount=this._pastSlideCount;
-            this.numberOfPage.innerText = `${pastCount+1}/${totalCount}`
+            this.numberOfPage.innerText = `${pastCount+1}/${totalCount}`;
         },
 
         /**Action for jumping to the first slide**/
         firstSlide: function() {
-            this.goToHorizontalSlide(0);
+            this.goToHorizontalSlide(0, this.configures.onSlideChanged());
         },
 
         /**Action for jumping to the last slide**/
         lastSlide: function() {
             this.goToHorizontalSlide(this.slides.length - 1);
-            this.goToVerticalSlide(this.slides[this.horizontalSlideIndex].cacheVerticalslides.length-1);
+            this.goToVerticalSlide(this.slides[this.horizontalSlideIndex].cacheVerticalslides.length-1, this.configures.onSlideChanged());
+        },
+
+        /**Action to go to a slide**/
+        goToSlide(indexh=0, indexv=0, indexf=0){
+            this.goToHorizontalSlide(indexh);
+            this.goToVerticalSlide(indexv, this.configures.onSlideChanged());
+            this.goToFragment(indexf);
         },
 
         /** Actions for jump between horizontal slides **/
         nextHorizontalSlide: function() {
             this.goRightDirection=true;
-            this.goToHorizontalSlide(this.horizontalSlideIndex + 1);
+            this.goToHorizontalSlide(this.horizontalSlideIndex + 1,this.configures.onSlideChanged());
+            if(this._currentSlideFragmentList.length>0){
+                this.goToFragment(this._currentSlideFragmentList.length, 'h')
+            }
         },
     
         preHorizontalSlide: function() {
-            this.goToHorizontalSlide(this.horizontalSlideIndex - 1);
+            this.goToHorizontalSlide(this.horizontalSlideIndex - 1, this.configures.onSlideChanged());
+            this._currentSlideFragmentList;
+            if(this._currentSlideFragmentList.length>0){
+                this.goToFragment(this._currentSlideFragmentList.length, 'h')
+            }
         },
 
-        goToHorizontalSlide: function( HorizontalIndex ){
+        goToHorizontalSlide: function( HorizontalIndex, callback ){
             const {slides} =this;
-            if(HorizontalIndex<0 || HorizontalIndex >= slides.length){
-                return false;
-            }
+
+            HorizontalIndex = HorizontalIndex < 0 ? 0 : HorizontalIndex >= slides.length ? slides.length-1 : HorizontalIndex;
             this.horizontalSlideIndex=HorizontalIndex;
             for(var i=0; i<slides.length; i++){
                 //const HStyle =window.getComputedStyle(slides[i].HSlides);
@@ -696,24 +711,30 @@
             this.updateProgressBar();
             this.updateNumberOfPage();
             this.saveEditedHTML();
+            if (typeof callback == "function") callback(); 
         },
 
         /** Actions for jump between vertical slides **/
         preVerticalSlide: function(){
-            this.goToVerticalSlide(this._currentHorizontalSlide.verticalSlidesIndex - 1);
+            this.goToVerticalSlide(this._currentHorizontalSlide.verticalSlidesIndex - 1,this.configures.onSlideChanged());
+            this._currentSlideFragmentList;
+            if(this._currentSlideFragmentList.length>0){
+                this.goToFragment(this._currentSlideFragmentList.length, 'v')
+            }
         },
 
         nextVerticalSlide: function(){
             this.goDownDirection=true;
-            this.goToVerticalSlide(this._currentHorizontalSlide.verticalSlidesIndex + 1);
+            this.goToVerticalSlide(this._currentHorizontalSlide.verticalSlidesIndex + 1, this.configures.onSlideChanged());
+            if(this._currentSlideFragmentList.length>0){
+                this.goToFragment(this._currentSlideFragmentList.length, 'v')
+            }
         },
 
-        goToVerticalSlide: function( VerticalIndex ){
+        goToVerticalSlide: function( VerticalIndex,callback ){
             const curHorizontalSlide = this._currentHorizontalSlide;
             const curVerticalSlides = curHorizontalSlide.cacheVerticalslides;
-            if ( VerticalIndex < 0 || VerticalIndex >= curVerticalSlides.length) {
-                return false;
-            } 
+            VerticalIndex = VerticalIndex < 0 ? 0 : VerticalIndex >= curVerticalSlides.length ? curVerticalSlides.length-1 : VerticalIndex;
             curHorizontalSlide.verticalSlidesIndex = VerticalIndex;
             for(var i=0; i<curVerticalSlides.length; i++){
                 if(i!==VerticalIndex){
@@ -729,6 +750,7 @@
             this.updateProgressBar();
             this.updateNumberOfPage();
             this.saveEditedHTML();
+            if (typeof callback == "function") callback(); 
         },
 
         updateVerticalSlidePosition: function( VerticalIndex , HorizontalIndex){
@@ -986,8 +1008,21 @@
                 this.currentEditElement.style.fontSize = (fontSize * 0.8 ) + 'px';
             }
         },
-                 
 
+        //toggle AutoSlide play
+        toggleAutoSlide(){
+            this.configures.autoplay=true;
+            this.autoPlayTimer = setInterval(function(){ this.autoPlayNextSlide(); }.bind(this), this.configures.autoplayTimeInterval);
+        },
+
+        toggleEditMode(){
+            this.configures.editMode=true;
+        },
+
+        ready(){
+            //console.log("Ready")
+        },
+                 
         get _currentHorizontalSlide(){
             return this.slides[this.horizontalSlideIndex];
         },
@@ -995,6 +1030,15 @@
         get _currentVerticalSlide(){
             const index=this.slides[this.horizontalSlideIndex].verticalSlidesIndex;
             return this.slides[this.horizontalSlideIndex].cacheVerticalslides[index];
+        },
+
+        get _currentSlideFragmentList(){
+            const curSlide = this._currentSlide;
+            if(curSlide.VSlides){
+                return curSlide.fragments;
+            }else{
+                return curSlide.cacheVerticalslides[0].fragments;
+            }
         },
 
         get _currentSlide(){
@@ -1024,6 +1068,20 @@
             totalCount += curVerticalSlideIndex;
             return totalCount;
         },
+
+        get _isAutoSliding(){
+            return this.configures.autoplay;
+        },
+
+        get _isPaused(){
+            return this.configures.pause
+        },
+
+        get _isEditedMode(){
+            return this.configures.editMode
+        },
+
+
 
 	}
 

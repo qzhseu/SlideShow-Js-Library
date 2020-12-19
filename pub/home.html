@@ -7,11 +7,14 @@
         <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script defer type="text/javascript" src="./js/slideDance.js"></script>
         <script defer type="text/javascript" src='./home.js'></script>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/styles/default.min.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
         
 	</head>
 	<body>
-		<div class="topSlideShow">
-            <div class="slideDance">
+		<div class="topSlideShow ">
+            <div class="slideDance slide1">
                 <div class="slides">
                     <slide>
                         <h1 data-fontFamily="'Brush Script MT', cursive">Slide.js</h1>
@@ -21,27 +24,348 @@
                         <p><a href="/demo">Full-Screen Demo</a></p>
 
                     </slide>
+                    <slide>
+                        <h2> slide1 </h2>
+                    </slide>
                 
                 </div>
             </div>
         </div>
+
+       
+        
         <div class="main-content">
             <div class="container block">
                 <h1>Document</h1>
             </div>
             <div class="container block">
                 <h2>Getting Started</h2>
-                
+                <p>
+                    The most common slide.js use case is to have a single presentation which covers the full viewport.
+                    We also support running multiple presentations in parallel on the same page.
+                </p>
+                <h3>Single Presentation</h3>
+                <ol>
+                    <li>
+                        <p>Download slide.js from the <a href="https://github.com/csc309-fall-2020/js-library-quzhaohu">github</a> link.</p>
+                    </li>
+                    <li>
+                        <p>Link to jQuery and the library along with the styles.</p>
+                        <pre class='hljs'><code class="xml"> &lt;link rel="stylesheet" href="/css/slideDance.css"&gt;<br> &lt;link rel="stylesheet" href="/css/theme/black.css" id="theme"&gt;<br> &lt;script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"&gt;&lt;/script&gt;<br> &lt;script defer type="text/javascript" src="./js/slideDance.js"&gt;&lt;/script&gt;</code></pre>
+                    </li>
+                    <li>
+                        <p>Create a "SlideDanceGenerator" and call the create the function.</p>
+                        <pre class='hljs'><code class='language-js hljs javascript'>const sg=new SlideDanceGenerator();<br>sg1.create()</code></pre>  
+                    </li>
+                    <li>
+                        <p>
+                            Now create your slide using slide.js. 
+                            Wrap your slides with a div, the class attribute of the div is slideDance.
+                            Each slide should inside &lt;slide&gt; tag.
+                        </p>
+                        <pre class='hljs'><code class="html">&lt;div class="slideDance"&gt;
+    &lt;div class="slides"&gt;
+        &lt;slide&gt;
+            ...
+        &lt;/slide&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                    </li>
+                </ol>
+                <h3>Multiple Presentation</h3>
+                <ol>
+                    <p>To run multiple presentations side-by-side on the same page you can create instances 
+                        of the SlideDance class. The SlideDanceGenerator accepts an optional argument, 
+                        the .slideDance HTML element root of the presentation.
+                    </p>
+                    <pre class='hljs'><code class="html">&lt;div class="slideDance slide1"&gt;...&lt;/div&gt;
+&lt;div class="slideDance slide2"&gt;...&lt;/div&gt;
+
+&lt;script&gt;
+    let slide1=document.querySelector('.slide1');
+    const sg1=new SlideDanceGenerator(slide1)
+    sg1.create()
+
+    let slide2=document.querySelector('.slide2');
+    const sg2=new SlideDanceGenerator(slide2)
+    sg2.create()
+&lt;/script&gt;</code></pre>
+                </ol>
+                <p>
+                    If you want to show code block with code syntax highlight in your slide, you can use external modules like <a href="https://highlightjs.org/">highlight.js.</a>
+                    Otherwise your code will be displayed in plain text.
+                </p>
             </div>
             <div class="container block">
-                <h2>API</h2>
-                <h3>options</h3>
+                <h2 >API</h2>
+                <h3>Config Options</h3>
+                <p>
+                    You can create the slides by calling create function. The create function 
+                    acccepts an optional argument, a slide.js config object. 
+                </p>
+                <pre><code>sg1.create({
+    progress : true,
+    controls : true,
+    ...
+})</code></pre>
+                <p>The accepted options are the following.</p>
+                <table class="api-list">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Default</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>controls</td>
+                            <td>true</td>
+                            <td>Boolean</td>
+                            <td>Whether to allow users to use control buttons to control the slideshow. </td>
+                        </tr>
+                        <tr>
+                            <td>controlsPosition</td>
+                            <td>bottom-right</td>
+                            <td>String</td>
+                            <td>
+                                This supports two options: 'bottom-right' and 'edges'.<br>
+                                bottom-right: Place the control buttons at the bottom right corner.<br>
+                                edges : Place the control buttons on the four sides of the slides.<br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>controlsTutorial</td>
+                            <td>true</td>
+                            <td>Boolean</td>
+                            <td>Whether to show control tutorial(control buttons will bounce). </td>
+                        </tr>
+                        <tr>
+                            <td>progress</td>
+                            <td>true</td>
+                            <td>Boolean</td>
+                            <td>Whether to show progress bar </td>
+                        </tr>
+                        <tr>
+                            <td>keyboard</td>
+                            <td>true</td>
+                            <td>Boolean</td>
+                            <td>
+                                Whether to allow users to use keyboard to control the slideshow.<br>
+                                <!-- The supported hotkeys are listed at keyBoard section. -->
+                                <!-- <ul>
+                                    <li>w:</li>
+                                    <li>a:</li>
+                                    <li>s:</li>
+                                    <li>d:</li>
+                                    <li>f:</li>
+                                    <li>l:</li>
+                                    <li>Space: </li>
+                                    <li>q:</li>
+                                    <li>o:</li>
+                                    <li>ArrowRight:</li>
+                                    <li>ArrowLeft:</li>
+                                    <li>ArrowUp: </li>
+                                    <li>ArrowDown: </li>
+                                    <li>+:</li>
+                                    <li>-:</li>
+                                </ul> -->
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>editMode</td>
+                            <td>false</td>
+                            <td>Boolean</td>
+                            <td>
+                                Whether to allow users to edit slides during presentation. 
+                                The supported editing operations include drag, resize, rotate, zoom in and zoom out.<br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>showNumberOfPage</td>
+                            <td>true</td>
+                            <td>Boolean</td>
+                            <td>Whether to show number of page.</td>
+                        </tr>
+                        <tr>
+                            <td>autoplay</td>
+                            <td>true</td>
+                            <td>Boolean</td>
+                            <td>Whether to autoplay slides. </td>
+                        </tr>
+                        <tr>
+                            <td>autoplayTimeInterval</td>
+                            <td>3000</td>
+                            <td>Int</td>
+                            <td>The time interval for automatic playback. (in ms). </td>
+                        </tr>
+                        <tr>
+                            <td>fontFamily</td>
+                            <td>'Times New Roman', Times, serif</td>
+                            <td>String</td>
+                            <td>The font style for the whole slides</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="container block">
+                <h3>CallBacks</h3>
+                <p>You can set your callback functions</p>
+                <table class="api-list">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Default</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>onReady</td>
+                            <td>false</td>
+                            <td>Function</td>
+                            <td>Triggered when the presentation is initialized.</td>
+                        </tr>
+                        <tr>
+                            <td>onSlideChanged</td>
+                            <td>false</td>
+                            <td>Function</td>
+                            <td>Triggered when the slide changes each time .</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="container block">
+                <h3>Methods</h3>
+                <p>Methods to control navigation and 
+                    check the current state of a presentation. 
+                </p>
+                <h4>Navigation</h4>
+                <pre class='hljs'><code>//Start the presentation
+slideDanceInstance.startPresentation();
+
+// Navigate to a specific slide
+slideDanceInstance.goToSlide(indexh, indexv, indexf)
+
+// Navigate to a horizontal slide
+slideDanceInstance.goToHorizontalSlide(indexh);
+
+// Navigate to a vertical slide at current vertical direction.
+slideDanceInstance.goToVerticalSlide(indexv);
+
+// Relative slide navigation
+slideDanceInstance.nextHorizontalSlide();
+slideDanceInstance.preHorizontalSlide();
+slideDanceInstance.preVerticalSlide();
+slideDanceInstance.nextVerticalSlide();
+
+// Navigate to the first slide
+slideDanceInstance.firstSlide();
+
+//Navigate to the last slide
+slideDanceInstance.lastSlide();
+
+// Navigate to a fragment on the current slide
+slideDanceInstance.goToVerticalSlide(indexv);
+
+//Relative fragment navigation
+slideDanceInstance.nextFragment();
+slideDanceInstance.preFragment();
+slideDanceInstance.upFragment();
+slideDanceInstance.downFragment();
+
+// Checks which directions we can navigate towards
+// This returns a object like "{top: false, right: true, bottom: false, left: false}"
+slideDanceInstance.availableRoutes();
+                </code></pre>
+                <h4>Slides</h4>
+                <pre class='hljs'><code>// Reset all slides to original status
+slideDanceInstance.resetSlide();
+
+// -Get the number of total slides"
+slideDanceInstance._totalSlides;
+
+// -Get the number of viewed slides.
+slideDanceInstance._pastSlideCount;
+
+// -Get current slide
+slideDanceInstance._currentSlide;
+
+// -Get the current horizontal slide
+slideDanceInstance._currentHorizontalSlide;
+
+// -Get the current vertical slide
+slideDanceInstance._currentVerticalSlide;
+
+// -Get all fragments at the current slide
+slideDanceInstance._currentSlideFragmentList;
+                </code></pre>
+                <h4>Modes</h4>
+                <pre class='hljs'><code>//Toggle presentation states, optionally pass "true/false" to force "on/off"
+//Toggle autoplay mode
+slideDanceInstance.toggleAutoSlide();
+
+//Pause autoplay
+slideDanceInstance.autoPlayPause();
+
+//Toggle edit slide mode
+slideDanceInstance.toggleEditMode();
+
+//-Get the mode state
+slideDanceInstance._isAutoSliding;
+slideDanceInstance._isPaused;
+slideDanceInstance._isEditedMode;
+                </code></pre>
+                
+                <h4>Misc</h4>
+                <pre class='hljs'><code>//Update the status of the control buttons after changing the slide.
+slideDanceInstance.updateControlButtons();
+
+//Update the status of the progress bar after changing the slide.
+slideDanceInstance.updateProgressBar();
+
+//Get the value of progress bar
+slideDanceInstance.getProgressPercentage();
+
+//Update the status of the current page number after changing the slide.
+slideDanceInstance.updateNumberOfPage();
+
+//Selected a element on presentation to drag, resize and rotate. The selected element will be wrapped with a colorful border.
+let e=document.querySelector('...');
+slideDanceInstance.selectElement(e, true);
+                </code></pre>
+            </div>
+            <div class="container block">
+                <h2>Complete configuration</h2>
+                <p>Complete configuration with callbacks set.</p>
+                <pre class='hljs'><code>const sg=new SlideDanceGenerator()
+sg.create({
+    controls : true,
+    controlsPosition : 'bottom-right', //'edges' or 'bottom-right',
+    controlsTutorial : true,
+    progress : true,
+    keyboard : true,  
+    editMode : true,
+    showNumberOfPage : true,
+    autoplay : false,
+    autoplayTimeInterval: 2000,
+    fontFamily : " 'Satisfy', Helvetica, sans-serif ",
+
+    onSlideChanged: function(){
+        console.log('SlideDance: Slide change');
+    },
+
+    onEnd: function(){
+        console.log('SlideDance: End');
+    }
+}) 
+                </code></pre>
             </div>
         </div>
-
-        
-        
-        
 	</body>
 </html>
 
