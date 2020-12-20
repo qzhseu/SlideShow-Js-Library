@@ -111,7 +111,7 @@
         if(parentNode){
             const parentTagName=el.parentNode.tagName;
             const parentClassName=el.parentNode.className;
-            if(parentClassName ==='slideDance') return true;
+            if(parentClassName.includes('slideDance')) return true;
             if(parentTagName==='BODY') return false;
             return childNodeOfSlideDance(parentNode)
         }
@@ -472,7 +472,6 @@
             //Listen for keyboard action
             document.addEventListener('keyup', e=>{
                 const {keyOperations} =this;
-                //console.log(e.key)
                 const key= e.key;
                 const code=e.code;
                 keysPressed[e.key] = true;
@@ -508,7 +507,6 @@
             //Mouse click select a element
             document.addEventListener('click', e=>{
                 //e.preventDefault()
-                console.log("Mouse click")
                 this.selectElement(e, pressingEditEnter);
             })
 
@@ -581,9 +579,12 @@
             const {slides, horizontalSlideIndex}=this;
             var verticalSlides=slides[horizontalSlideIndex].cacheVerticalslides;
             var verticalIndex=slides[horizontalSlideIndex].verticalSlidesIndex;
+            var fragmentList=verticalSlides[0].fragments;
+            var fragmentIndex=verticalSlides[0].fragmentIndex;
+
             var routes={
-                left: horizontalSlideIndex>0,
-                right: horizontalSlideIndex<slides.length-1,
+                left: horizontalSlideIndex>0 || fragmentIndex>0,
+                right: horizontalSlideIndex<slides.length-1 || fragmentIndex<fragmentList.length,
                 up: verticalIndex>0,
                 down: verticalIndex <  verticalSlides.length-1,
             }
@@ -891,12 +892,14 @@
                     this.currentEditElement=null; 
                 }
                 const selectedElement = decideSelectedElement(e);
-                console.log(selectedElement)
+                
                 const belongSlideDance = childNodeOfSlideDance(selectedElement);
                 const tagName=selectedElement.tagName;
                 const className=selectedElement.className;
                 const unableDragEle=['videoBackground','codeLine','lineNumber'];
+                console.log(selectedElement, belongSlideDance)
                 if(belongSlideDance && tagName!=='SLIDE' && !arrowsClassActive.includes(className) && !arrowsClassDisactive.includes(className) && !unableDragEle.includes(className)){
+                    console.log("Selected")
                     selectedElement.classList.add('selectedElement')
                     createElement(selectedElement, 'div', 'resizer-top-left', '')
                     createElement(selectedElement, 'div', 'resizer-top-right', '')
@@ -1017,10 +1020,6 @@
 
         toggleEditMode(){
             this.configures.editMode=true;
-        },
-
-        ready(){
-            //console.log("Ready")
         },
                  
         get _currentHorizontalSlide(){

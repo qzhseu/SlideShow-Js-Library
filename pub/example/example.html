@@ -1,0 +1,394 @@
+<!doctype html>
+<html>
+	<head>
+		<link rel="stylesheet" href="/../css/slideDance.css">
+        <link rel="stylesheet" href="/../css/theme/black.css" id="theme">
+        <link rel="stylesheet" href="./home.css">
+        <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script defer type="text/javascript" src="../js/slideDance.js"></script>
+        <script defer type="text/javascript" src='./example.js'></script>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/styles/default.min.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        
+	</head>
+	<body>
+        <div class="topSlideShow ">
+            <div class="slideDance slide1">
+                <div class="slides">
+                    <slide data-background="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHw%3D&w=1000&q=80">
+                        <h1 data-fontFamily="'Brush Script MT', cursive">Slide.js</h1>
+                        <p>
+                            Slide.js enables you to create amazing slides using HTML.
+                        </p>
+                        <p><a href="/demo">Full-Screen Demo</a></p>
+                        <p><a href="/">Document</a></p>
+                    </slide>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="container block">
+                <h1>Examples</h1>
+                <p><a href="/demo">Click here to see full-screen demo!</a></p>
+            </div>
+
+            <div class="container block">
+                <h2>Horizontal Slides and Vertical Slides</h2>
+                <p>
+                    Your slides are jumped between using a horizontal sliding transition by default. These horizontal slides
+                    are considered as top-level slides in your deck.<br>
+
+                    You can also nest multiple slides within a single horizontal slide to create a vertical stack. This is 
+                    convenient to group similar content together in your presentation. When presenting, you can the left/right 
+                    arrows button to jump through the horizontal slides. When you arrive at a vertical stack you can use up/down 
+                    arrows to jump through the vertical slides. If you keep clicking the left/right arrow, you will skip the vertical stack. 
+                </p>
+                <p>Here is a simple vertical slide stack</p>
+                <pre class="hljs"><code>&lt;slide&gt;
+    &lt;h4&gt;Slide 1&lt;/h4&gt;
+&lt;/slide&gt;
+&lt;slide&gt;
+    &lt;slide&gt;
+        &lt;h4&gt;Slide 2.1&lt;/h4&gt;
+    &lt;/slide&gt;
+    &lt;slide&gt;&gt;
+        &lt;h4&gt;Slide 2.2&lt;/h4&gt;
+    &lt;/slide&gt;
+&lt;/slide&gt;
+                </code></pre>
+
+                <div class="slideItem">
+                    <div class="slideDance slide2">
+                        <div class="slides">
+                            <slide>
+                                <h4>Slide 1</h4>
+                            </slide>
+                            <slide>
+                                <slide>
+                                    <h4>Slide 2.1</h4>
+                                </slide>
+                                <slide>
+                                    <h4>Slide 2.2</h4>
+                                </slide>
+                            </slide>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container block">
+                <h2>Fragments</h2>
+                <p>
+                    Fragments are used to incrementally present content on your slide. Each fragment 
+                    with a fragment tag name will appear one by one when you click the right/left arrows.
+                </p>
+                <pre><code>&lt;slide&gt;
+    &lt;fragment&gt; content1 &lt;/fragment&gt;
+    &lt;fragment&gt; content2 &lt;/fragment&gt;
+    &lt;fragment&gt; content3 &lt;/fragment&gt;
+&lt;/slide&gt;</code></pre>
+                <div class="slideItem">
+                    <div class="slideDance slide3">
+                        <div class="slides">
+                            <slide>
+                                <fragment>content1</fragment>
+                                <fragment>content2</fragment>
+                                <fragment>content3</fragment>
+                            </slide>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="container block">
+                <h2>Edit Mode</h2>
+                <p>
+                    The presentation can be configured to allow users to enter editing mode while presenting.
+                    Try to press "SHIFT" and use mouse to click the element in the slide at the same time. Then you 
+                    can enter editing mode.
+                </p>
+                <p>
+                    After the selected box appears, you can drag it to any position, 
+                    adjust the size by dragging the circles at the four corners, and  
+                    click the circle in the top middle to rotate it. Press "SHIFT" and 
+                    click other element to switch element. You can press o to exit the edit mode.
+                </p>
+                <pre><code>slideDanceInstance.create({ editMode : true })</code></pre>
+                <div class="slideItem">
+                    <div class="slideDance slide4">
+                        <div class="slides">
+                            <slide>
+                                <h2>drag me</h2>
+                            </slide>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container block">
+                <h2>Auto-Slide</h2>
+                <p>
+                    The presentation can be configured to go through slides automatically.
+                    To enable this you will need to assign true to "autoplay" and set 
+                    "autoplayTimeInterval" in the config option. The interval is 
+                    provided in milliseconds.
+                </p>
+                
+                <pre><code>slideDanceInstance.create({ 
+    autoplay : true,
+    autoplayTimeInterval: 2000,
+})</code></pre>
+                <div class="slideItem">
+                    <div class="slideDance slide5">
+                        <div class="slides">
+                            <slide>
+                                <h2>Slide 1</h2>
+                            </slide>
+                            <slide>
+                                <slide>
+                                    <h2>Slide 2.1</h2>
+                                </slide>
+                                <slide>
+                                    <h2>Slide 2.2</h2>
+                                </slide>
+                            </slide>
+                            <slide>
+                                <h2>Slide 3</h2>
+                            </slide>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container block">
+                <h2>Presenting Code</h2>
+                <p>You can use slide.js to present code and highlight specific lines of code. But you need to replace 
+                    &lt; and &gt; with &lt ; and &gt ; in your code.
+                </p>
+                <p>
+                    If you want to show code block, your code will be displayed as plain text on the slide. 
+                    But if you want to present code with code syntax highlight, you can use external modules like
+                    <a href="https://highlightjs.org/">highlight.js.</a> and so on.
+                </p>
+                <p>To show your code block you need warp your code with &lt;pre&gt; and &lt;code&gt; You also need to
+                    add 'data-trim' attribute to &lt;code&gt;, When the data-trim attribute is added, all surrounding 
+                    whitespace within the &lt;code&gt; will be removed.
+                </p>
+
+                <p>
+                    If you want to highlight some lines of code. You can add 'data-hightlight-line' attribute to &lt;code&gt;
+                    and provide a comma seperated list of numbers. For example, data-hightlight-line="3,13-17" means line 3, and 
+                    13 to 17 is highlighted.
+                </p>
+                <pre><code>&lt;pre&gt;&lt;code data-code-trim data-hightlight-line="3,13-17"&gt;
+    import React, { useState } from 'react';
+
+    function ExampleOne() {
+        const [time, setTime] = useState(0);
+        return (
+            &lt;h2&gt; Time: {time} &lt;/h2&gt;
+        );
+    }
+    ...
+&lt;/code&gt;&lt;/pre&gt;
+                </code></pre>
+                <div class="slideItem">
+                    <div class="slideDance slide6">
+                        <div class="slides">
+                            <slide>
+                                <h4>Presenting Code</h4>
+                                <pre><code data-code-trim class="plaintext">
+                                    import React, { useState } from 'react';
+
+                                    function Example() {
+                                        const [time, setTime] = useState(0);
+
+                                        return (
+                                            &lt;h2&gt; Time: {time} &lt;/h2&gt;
+                                        );
+                                    }
+                                </code></pre>
+                            </slide>
+                            <slide>
+                                <h4>Highlighting Code</h4>
+                                <pre><code data-code-trim data-hightlight-line="3,13-17" class="plaintext">
+                                    import React, { useState } from 'react';
+
+                                    function ExampleOne() {
+                                        const [time, setTime] = useState(0);
+                                        return (
+                                            &lt;h2&gt; Time: {time} &lt;/h2&gt;
+                                        );
+                                    }
+
+                                    function ExampleTwo() {
+                                        const [year, setYear] = useState(1990);
+
+                                        return (
+                                            &lt;h2&gt; Year: {year} &lt;/h2&gt;
+                                            &lt;button onClick={() => setYear(year + 1)}&gt;
+                                                Add Year
+                                            &lt;/button&gt;
+                                        );
+                                    }
+
+                                    function ExampleThree() {
+                                        const [gender, setGender] = useState(1);
+
+                                        return (
+                                            &lt;h2&gt; Gender: {gender} &lt;/h2&gt;
+                                        );
+                                    }
+                                </code></pre>
+                            </slide>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container block">
+                <h2>Set Background</h2>
+                <p>
+                    You can add full-page background on the slide by adding a data-background 
+                    attribute to your &lt;slide&gt; elements. Slide.js supports three types of 
+                    backgrounds: color, image and vedio. 
+                </p>
+                <h3>Color Background</h3>
+                <p>All CSS color formats are supported, including hex values, keywords or rgba().</p>
+                <pre><code>&lt;slide data-background="#163a22"&gt;
+    &lt;p>&#129409;&lt;/p&gt;
+&lt;/slide&gt;
+&lt;slide data-background="lightskyblue"&gt;
+    &lt;p>&#9973;&lt;/p&gt;
+&lt;/slide&gt;</code></pre>
+
+                <div class="slideItem">
+                    <div class="slideDance slide7">
+                        <div class="slides">
+                            <slide data-background="#163a22">
+                                <p>&#129409;</p>
+                            </slide>
+                            <slide data-background="lightskyblue">
+                               <p>&#9973;</p>
+                            </slide>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Image Background</h3>
+                <p>Available attribute options:</p>
+                <table class="api-list">
+                    <thead>
+                        <tr>
+                            <th>Attribute</th>
+                            <th>Default</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                data-background
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                String
+                            </td>
+                            <td>
+                                Image URL or GIF URL
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                data-background-repeat
+                            </td>
+                            <td>
+                                no-repeat
+                            </td>
+                            <td>
+                                String
+                            </td>
+                            <td>
+                                Sets how background images are repeated.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                data-background-size
+                            </td>
+                            <td>
+                                cover
+                            </td>
+                            <td>
+                                String
+                            </td>
+                            <td>
+                                Sets the size of the element's background image. <br>
+                                The background image will be resized to cover the entire slide by default.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>You can wrap your content with a background-content tag and your content will be displayed on a 
+                    translucent panel.
+                </p>
+                <pre><code>&lt;slide data-background="https://images...."&gt;
+    &lt;background-content>
+        &lt;p>You can add content under &lt;italic>background-content tag&lt;/italic>&lt;/p>
+    &lt;/background-content&gt;
+&lt;/slide&gt;
+&lt;slide data-background="https://images...." data-background-repeat="repeat" data-background-size="300px" &gt;
+    &lt;h4>TILED BACKGROUNDS&lt;/h4&gt;
+&lt;/slide&gt;</code></pre>
+
+                <div class="slideItem">
+                    <div class="slideDance slide8">
+                        <div class="slides">
+                            <slide data-background="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHw%3D&w=1000&q=80">
+                                <background-content>
+                                    <p>You can add content under <italic>background-content tag</italic></p>
+                                </background-content>
+                            </slide>
+                            <slide data-background="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHw%3D&w=1000&q=80" data-background-repeat="repeat" data-background-size="300px">
+                                <h4>TILED BACKGROUNDS</h4>
+                            </slide>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Video Background</h3>
+                <p>Video will cover the full slide</p>
+                <p>Setting data-background-video attribute with the video URL.</p>
+                <pre><code>&lt;slide data-background-video="Your video path"&gt;
+    &lt;background-content>
+        &lt;h4>VIDEO BACKGROUND&lt;/h4>
+    &lt;/background-content&gt;
+&lt;/slide&gt;</code></pre>
+                
+                <div class="slideItem">
+                    <div class="slideDance slide9">
+                        <div class="slides">
+                            <slide data-background-video="https://csc309.s3.us-east-2.amazonaws.com/Autumn+-+18420.mp4">
+                                <background-content>
+                                    <h4>video background</h4>
+                                </background-content>
+                            </slide>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            </div>
+
+
+        </div>
+
+	</body>
+</html>
+

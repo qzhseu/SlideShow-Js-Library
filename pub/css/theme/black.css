@@ -5,6 +5,7 @@
     --codeBackgroundColor: rgb(45, 42, 51);
     --progressBarColor: #887bff; 
     --controlButtonColor: #887bff; 
+    --quart: #887bff00; 
     --selectBoxColor: #ff9100; 
     --selectBoxColor_0: #ff9100; 
     --selectBoxColor_1: #f3ef1dd3;
@@ -137,11 +138,12 @@
 
 /**Control button**/
 .quart {
-    background: var( --controlButtonColor);
+    background: var( --quart);
 }
 
-.quart:hover {
-    background: var(--controlButtonHoverColor);
+.controls .rightArrow:hover, .controls .upArrow:hover,
+.controls .downArrow:hover, .controls .leftArrow:hover{
+    color:var(--controlButtonHoverColor);
 }
 
 .controlsEdge .rightArrow:hover, .controlsEdge .upArrow:hover,
@@ -231,7 +233,7 @@
 
 /**Show Code**/
 .slideDance pre{
-    height: 300px;
+    height: 250px;
     background-color: var(--codeBackgroundColor);
 }
 

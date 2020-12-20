@@ -10,10 +10,4 @@ sg1.create({
     controlsPosition : 'edges', //'edges' or 'bottom-right',
     fontFamily : " 'Satisfy', Helvetica, sans-serif ",
     autoplayTimeInterval: 2000,
-    onReady: function() {
-        console.log('SlideDance: Ready');
-    },
-    onSlideChanged: function(){
-        console.log('SlideDance: Slide change');
-    },
 })

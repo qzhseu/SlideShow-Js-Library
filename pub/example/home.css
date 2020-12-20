@@ -9,8 +9,8 @@
 .slideItem{
     position: relative;
     margin: 0 auto;
-    height: 300px;
-    width: 60%;
+    height: 400px;
+    width: 65%;
 }
 
 .container{
@@ -35,6 +35,10 @@
 
 .main-content h1, .main-content h2, .main-content h3, .main-content h4 {
     color: #5e25e2;
+}
+
+.slides h1, .slides h2, .slides h3, .slides h4{
+    color: #fff;
 }
 
 .main-content .api-list{
