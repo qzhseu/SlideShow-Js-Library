@@ -1,7 +1,7 @@
 # js-library-quzhaohu
 ## Slide.js
 
-### [Landing Page](https://polar-dawn-62675.herokuapp.com/demo)
+### [Landing Page](https://polar-dawn-62675.herokuapp.com/example/)
 ### [Document](https://polar-dawn-62675.herokuapp.com/)
 
 ### Getting Started

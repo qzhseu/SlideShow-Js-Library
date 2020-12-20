@@ -1079,11 +1079,9 @@
         get _isEditedMode(){
             return this.configures.editMode
         },
-
-
-
 	}
 
 	global.SlideDanceGenerator = global.SlideDanceGenerator || SlideDanceGenerator
 
 })(window, window.document, $); // pass the global window object and jquery to the anonymous function. They will now be locally scoped inside of the function.
+//Reference: https://github.com/hakimel/reveal.js/
