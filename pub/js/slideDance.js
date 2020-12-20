@@ -897,9 +897,7 @@
                 const tagName=selectedElement.tagName;
                 const className=selectedElement.className;
                 const unableDragEle=['videoBackground','codeLine','lineNumber'];
-                console.log(selectedElement, belongSlideDance)
                 if(belongSlideDance && tagName!=='SLIDE' && !arrowsClassActive.includes(className) && !arrowsClassDisactive.includes(className) && !unableDragEle.includes(className)){
-                    console.log("Selected")
                     selectedElement.classList.add('selectedElement')
                     createElement(selectedElement, 'div', 'resizer-top-left', '')
                     createElement(selectedElement, 'div', 'resizer-top-right', '')
@@ -933,7 +931,7 @@
                 resizing=true;
                 resizeButton=e.target.className;
                 originalMouseX=e.pageX;
-                originalMouseY=e.pageY;
+                originalMouseY=e.clientY;
             }
         },
 
@@ -941,7 +939,7 @@
             if(target.className.includes('rotate')){
                 rotating=true;
                 originalMouseX=e.pageX;
-                originalMouseY=e.pageY;
+                originalMouseY=e.clientY;
             }
         },
 
@@ -957,6 +955,7 @@
 
         mouseMoveResizeEl(e){
             if(resizing){
+                console.log(this.currentEditElement, this.currentEditElement.offsetWidth)
                 var originalWidth=this.currentEditElement.offsetWidth;
                 var originalHeight=this.currentEditElement.offsetHeight;
                 var originalL=this.currentEditElement.getBoundingClientRect().left;
@@ -966,16 +965,16 @@
 
                 if(resizeButton.includes('bottom-right')){
                     this.currentEditElement.style.width = e.pageX - originalL +'px';
-                    this.currentEditElement.style.height = e.pageY - originalT + 'px';
+                    this.currentEditElement.style.height = e.clientY - originalT + 'px';
                 }else if(resizeButton.includes('bottom-left')){
                     this.currentEditElement.style.width = (originalR - e.pageX) +'px'
-                    this.currentEditElement.style.height = e.pageY - originalT + 'px';
+                    this.currentEditElement.style.height = e.clientY - originalT + 'px';
                 }else if(resizeButton.includes('top-left')){
                     this.currentEditElement.style.width = originalWidth - (e.pageX - originalL) + 'px';
-                    this.currentEditElement.style.height = originalHeight - (e.pageY -  originalT) + 'px';
+                    this.currentEditElement.style.height = originalHeight - (e.clientY -  originalT) + 'px';
                 }else if(resizeButton.includes('top-right')){
                     this.currentEditElement.style.width = e.pageX - originalL +'px';
-                    this.currentEditElement.style.height = originalHeight - (e.pageY - originalT) +'px';
+                    this.currentEditElement.style.height = originalHeight - (e.clientY - originalT) +'px';
                 }
             }
         },
