@@ -1,6 +1,5 @@
-# js-library-quzhaohu
 ## Slide.js
-
+Thanks for the idea from reveal.js.
 ### [Landing Page](https://polar-dawn-62675.herokuapp.com/example/)
 ### [Document](https://polar-dawn-62675.herokuapp.com/)
 
